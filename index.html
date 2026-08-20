@@ -597,7 +597,7 @@
   .timeline-inner {
     direction: ltr;
     position: relative;
-    width: auto !important;
+    min-width: auto !important;
   }
   
   .ruler {
@@ -616,7 +616,7 @@
     display: flex;
     align-items: flex-end;
     pointer-events: none;
-    margin-inline-start: 6px;
+    padding-inline-start: 0;
   }
   
   .tick::before {
@@ -629,7 +629,7 @@
   .tick span {
     font-size: 9.5px;
     color: var(--muted-2);
-    margin-inline-start: 3px;
+    margin-inline-start: 4px;
     margin-bottom: 1px;
     white-space: nowrap;
   }
@@ -1436,7 +1436,6 @@
   function buildRuler(){
     ruler.innerHTML = '';
     
-    // إعطاء عرض كاف للـ Timeline لمنع التداخل مع الفيديوهات الطويلة
     const pxPerSec = Math.max(12, 800 / (mainDuration || 1));
     const totalWidth = Math.max(timelineScroll.clientWidth, mainDuration * pxPerSec);
     timelineInner.style.width = totalWidth + 'px';
