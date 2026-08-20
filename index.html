@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<!-- saved from url=(0032)https://my-five-vert.vercel.app/ -->
-<html lang="ar" dir="rtl" data-aob-ui="">
+<html lang="ar" dir="rtl">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>استوديو دمج المقاطع</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
-<link href="./استوديو دمج المقاطع_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0E0E13;
@@ -61,7 +59,7 @@
     accent-color: var(--video);
   }
 
-  /* ---------- Header ---------- */
+  /* Header */
   header {
     display: flex;
     align-items: center;
@@ -152,7 +150,7 @@
     }
   }
 
-  /* ---------- Layout ---------- */
+  /* Layout */
   .layout {
     display: grid;
     grid-template-columns: 340px 1fr;
@@ -160,8 +158,10 @@
     min-height: calc(100vh - 68px);
   }
 
-  /* ---------- Sidebar ---------- */
+  /* Sidebar */
   .sidebar {
+    position: sticky;
+    top: 87px;
     border-inline-start: 1px solid var(--border);
     background: var(--panel);
     padding: 20px;
@@ -311,17 +311,6 @@
     margin-bottom: 6px;
   }
   
-  .field input[type=text] {
-    width: 100%;
-    background: var(--panel-alt);
-    border: 1px solid var(--border);
-    color: var(--text);
-    border-radius: 8px;
-    padding: 9px 10px;
-    font-size: 13px;
-    font-family: inherit;
-  }
-  
   .time-row {
     display: flex;
     gap: 8px;
@@ -374,6 +363,7 @@
     border-radius: 20px;
     transition: .2s;
     flex-shrink: 0;
+    cursor: pointer;
   }
   
   .switch.on {
@@ -395,11 +385,7 @@
   .switch.on::after {
     transform: translateX(19px);
   }
-  
-  html[dir=rtl] .switch.on::after {
-    transform: translateX(19px);
-  }
-  
+
   .delete-clip {
     width: 100%;
     margin-top: 6px;
@@ -414,13 +400,14 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
+    cursor: pointer;
   }
   
   .delete-clip:hover {
     background: rgba(233,85,107,.1);
   }
 
-  /* ---------- Stage ---------- */
+  /* Stage */
   .stage-area {
     padding: 24px 28px;
     display: flex;
@@ -488,11 +475,8 @@
     box-shadow: 0 6px 22px -6px rgba(0,0,0,.6);
     border: 1.5px solid rgba(255,255,255,.14);
     transition: opacity .15s;
-  }
-  
-  .overlay-el.audio-only-hidden {
-    opacity: 0;
     pointer-events: none;
+    z-index: 10;
   }
   
   .rec-canvas {
@@ -578,7 +562,7 @@
     height: 15px;
   }
 
-  /* ---------- Timeline ---------- */
+  /* Timeline */
   .timeline-card {
     background: var(--panel);
     border: 1px solid var(--border);
@@ -618,6 +602,8 @@
     position: relative;
     border-bottom: 1px solid var(--border);
     margin-bottom: 6px;
+    cursor: pointer;
+    touch-action: none;
   }
   
   .tick {
@@ -626,6 +612,7 @@
     bottom: 0;
     display: flex;
     align-items: flex-end;
+    pointer-events: none;
   }
   
   .tick::before {
@@ -645,9 +632,10 @@
   .track-row {
     height: 38px;
     position: relative;
-    margin-bottom: 6px;
+    margin-bottom: 6px !important;
     background: #131319;
     border-radius: 6px;
+    margin: 0 2px;
   }
   
   .clip-block {
@@ -664,6 +652,7 @@
     overflow: hidden;
     user-select: none;
     touch-action: none;
+    box-sizing: border-box;
   }
   
   .clip-block.hiddenclip {
@@ -672,8 +661,14 @@
   }
   
   .clip-block.selectedblock {
-    outline: 2px solid #fff;
-    outline-offset: 1px;
+    outline: 2px solid #ffffff;
+    outline-offset: -1px;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    z-index: 5;
+  }
+
+  .clip-block.selectedblock:active {
+    cursor: grabbing;
   }
   
   .clip-block span {
@@ -703,26 +698,39 @@
   
   .playhead {
     position: absolute;
-    top: 0;
+    top: -6px;
     bottom: 0;
+    width: 16px;
+    margin-left: -8px;
+    z-index: 100;
+    cursor: e-resize;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .playhead::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: -6px;
+    left: 50%;
     width: 2px;
+    transform: translateX(-50%);
     background: #fff;
-    z-index: 5;
-    pointer-events: none;
-    box-shadow: 0 0 6px rgba(255,255,255,.6);
+    box-shadow: 0 3px 0 1px #131319, 0 2px 0 3px #2b2b39;
   }
   
   .playhead::before {
     content: '';
     position: absolute;
-    top: -6px;
+    top: 0;
     left: 50%;
-    transform: translateX(-50%);
-    width: 9px;
-    height: 9px;
+    transform: translateX(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
     background: #fff;
     border-radius: 2px;
-    rotate: 45deg;
+    z-index: 2;
   }
 
   .export-panel {
@@ -787,246 +795,119 @@
     display: none;
   }
 
-  /* ---------- Responsive Adjustments (Mobile) ---------- */
+  #tracksWrap {
+    background: #131319;
+    border-radius: 6px;
+  }
+
+  /* Bottom Nav (Hidden by Default) */
+  .bottom-nav {
+    display: none;
+  }
+
   @media(max-width: 900px) {
-    header {
-      padding: 12px 16px;
-    }
+    header { padding: 12px 16px; }
+    .brand h1 { font-size: 16px; }
+    .brand p { display: none; }
+    .export-btn { padding: 8px 14px; font-size: 12px; }
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: relative; top: 0; max-height: none; border-inline-start: none; border-bottom: 1px solid var(--border); }
+    .stage-area { padding: 16px; }
+    .export-panel { flex-direction: column; align-items: stretch; }
+    .export-panel video { width: 100%; }
+  }
 
-    .brand h1 {
-      font-size: 16px;
-    }
-
-    .brand p {
-      display: none;
-    }
-
-    .export-btn {
-      padding: 8px 14px;
-      font-size: 12px;
+  /* Touch Mode Layout Adjustments */
+  @media (hover: none) and (pointer: coarse) {
+    #durTime, .vol, #exportBtnTxt, .time-display a { display: none !important; }
+    
+    body {
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .layout {
-      grid-template-columns: 1fr;
+      display: flex !important;
+      flex-direction: row !important;
+      /* width: 200vw !important; */
+      height: calc(100vh - 68px - 60px) !important;
+      min-height: auto !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      padding-bottom: 0 !important;
+      overflow: hidden;
+      scrollbar-width: none;
+      flex: 1 1;
+    }
+
+    .sidebar, .stage-area {
+      width: 100vw !important;
+      flex-shrink: 0 !important;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      height: 100% !important;
+      overflow-y: auto !important;
+      box-sizing: border-box;
     }
 
     .sidebar {
-      max-height: none;
-      border-inline-start: none;
-      border-bottom: 1px solid var(--border);
+      order: 2;
+      position: relative !important;
+      top: 0 !important;
+      max-height: 100% !important;
+      border-inline-start: none !important;
+      border-bottom: none !important;
     }
 
     .stage-area {
-      padding: 16px;
+      order: 1;
     }
 
-    .export-panel {
-      flex-direction: column;
-      align-items: stretch;
+    .no-video {
+      height: 36vh;
     }
 
-    .export-panel video {
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      display: flex;
+      /* position: fixed; */
+      bottom: 0;
+      /* left: 0; */
+      /* right: 0; */
+      height: 60px;
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      z-index: 1000;
+      justify-content: space-around;
+      align-items: center;
       width: 100%;
     }
-  }
 
-  @media (hover: none) and (pointer: coarse) {
-    .time-display,.vol,#exportBtnTxt {
-      display: none !important;
+    .bottom-nav button {
+      background: none;
+      border: none;
+      color: var(--muted);
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, background 0.2s;
     }
-    .layout {
-      padding-bottom: 60px;
+
+    .bottom-nav button.active {
+      color: var(--video);
+      background: rgba(62, 216, 195, 0.05);
+    }
+
+    .bottom-nav button svg {
+      width: 24px;
+      height: 24px;
     }
   }
-</style>
-<style>
-  #ai3xvOPnOoqXO,
-  #ahS7M79CvEU1l,
-  #aE6QwdcnhJRyb,
-  #aRxRcbK4RqPTq,
-  #atoc3Bw4aXgun,
-  #aeaqjlqRDYgeJ,
-  .owbqmoy {
-    display: none !important;
-  }
-</style>
-<style>
-/* Day mode (light theme) */
-@media (prefers-color-scheme: light) {
-  #__adblock_toast {
-    background: linear-gradient(135deg, #f0f4f8 0%, #f0f4f8 100%) !important;
-    border: 1px solid rgba(0, 150, 136, 0.3) !important;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,150,136,0.06) !important;
-    color: #1a2332 !important;
-  }
-
-  #__adblock_toast:hover {
-    background: linear-gradient(135deg, #e8edf5 0%, #e8edf5 100%) !important;
-    border-color: rgba(0, 150, 135, 0.34) !important;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,150,136,0.15), 0 0 20px rgba(0,150,136,0.05) !important;
-  }
-
-  #__adblock_toast_icon {
-    background: rgba(0, 150, 136, 0.12) !important;
-  }
-
-  #__adblock_toast_title {
-    color: #00796b !important;
-  }
-
-  #__adblock_toast_sub {
-    color: rgba(60, 80, 90, 0.7) !important;
-  }
-
-  #__adblock_toast_close {
-    background: rgba(0,0,0,0.06) !important;
-    color: rgba(60,80,90,0.4) !important;
-  }
-
-  #__adblock_toast_close:hover {
-    background: rgba(200,50,50,0.12) !important;
-    color: #d32f2f !important;
-  }
-}
-
-/* Night mode (dark theme - default) */
-@media (prefers-color-scheme: dark) {
-  #__adblock_toast {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
-    border: 1px solid rgba(0, 230, 118, 0.35) !important;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 0 0 1px rgba(0,230,118,0.08) !important;
-    color: #e8f5e9 !important;
-  }
-
-  #__adblock_toast:hover {
-    background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%) !important;
-    border-color: rgba(0, 230, 118, 0.6) !important;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,230,118,0.18), 0 0 20px rgba(0,230,118,0.1) !important;
-  }
-
-  #__adblock_toast_icon {
-    background: rgba(0, 230, 118, 0.15) !important;
-  }
-
-  #__adblock_toast_title {
-    color: #00e676 !important;
-  }
-
-  #__adblock_toast_sub {
-    color: rgba(200, 230, 201, 0.7) !important;
-  }
-
-  #__adblock_toast_close {
-    background: rgba(255,255,255,0.07) !important;
-    color: rgba(200,230,201,0.5) !important;
-  }
-
-  #__adblock_toast_close:hover {
-    background: rgba(255,80,80,0.2) !important;
-    color: #ff5252 !important;
-  }
-}
-
-@keyframes __adblock_slidein {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-30px) scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-}
-
-@keyframes __adblock_slideout {
-  0% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-30px) scale(0.95);
-  }
-}
-
-#__adblock_toast {
-  position: fixed !important;
-  font-family: 'Segoe UI', Tahoma, sans-serif !important;
-  font-size: 81.25% !important;
-  text-align: right !important;
-  top: 24px !important;
-  left: 50% !important;
-  transform: translateX(-50%);
-  z-index: 2147483647 !important;
-  border-radius: 50px !important;
-  padding: 14px 22px !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
-  min-width: 240px !important;
-  max-width: 340px !important;
-  width: max-content !important;
-  box-sizing: border-box !important;
-  cursor: default !important;
-  user-select: none !important;
-  direction: rtl !important;
-  animation: __adblock_slidein 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards !important;
-  will-change: transform !important;
-}
-
-#__adblock_toast:hover {
-  transform: translateX(-50%) translateY(-2px);
-  transition: background .25s ease, border-color .25s ease, box-shadow .25s ease, transform .25s ease;
-}
-
-#__adblock_toast.__adblock_hiding {
-  animation: __adblock_slideout 0.4s ease forwards !important;
-}
-
-#__adblock_toast_icon {
-  width: 34px !important;
-  height: 34px !important;
-  border-radius: 50% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-shrink: 0 !important;
-  font-size: 17px !important;
-}
-
-#__adblock_toast_text {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 2px !important;
-}
-
-#__adblock_toast_title {
-  font-weight: 700 !important;
-  font-size: 13.5px !important;
-  letter-spacing: 0.2px !important;
-}
-
-#__adblock_toast_sub {
-  font-size: 11.5px !important;
-}
-
-#__adblock_toast_close {
-  margin-right: auto !important;
-  margin-left: 4px !important;
-  flex-shrink: 0 !important;
-  width: 20px !important;
-  height: 20px !important;
-  border: none !important;
-  border-radius: 50% !important;
-  font-size: 13px !important;
-  line-height: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  cursor: pointer !important;
-  transition: background .2s, color .2s;
-}
 </style>
 </head>
 <body>
@@ -1047,26 +928,8 @@
   </button>
 </header>
 
-<div class="layout">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <h2>المقاطع المُضافة</h2>
-    <label class="add-clip-btn" for="clipInput">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
-      إضافة مقطع فيديو أو صوت
-      <input type="file" id="clipInput" accept="video/*,audio/*" multiple="">
-    </label>
-
-    <div id="clipList"></div>
-    <div class="empty-hint" id="emptyHint">لم تُضف أي مقاطع بعد. اختر مقطعًا لإدراجه فوق الفيديو الأساسي في أي لحظة تريدها.</div>
-
-    <div class="inspector" id="inspector" style="display:none;"></div>
-  </aside>
-
-  <!-- STAGE -->
-  <main class="stage-area">
-
+<div class="layout" id="mainLayout">
+  <main class="stage-area" id="stageArea">
     <div id="noVideoBox" class="no-video">
       <svg viewBox="0 0 24 24" width="34" height="34" fill="none"><path d="M4 6h16v12H4z" stroke="#5E5E70" stroke-width="1.6"></path><path d="M9 9.5l6 2.5-6 2.5v-5z" fill="#5E5E70"></path></svg>
       <div style="text-align:center;">ابدأ برفع الفيديو الأساسي</div>
@@ -1077,13 +940,13 @@
     <div id="stageContent" style="display:none;">
       <div class="preview-wrap">
         <div class="preview-frame" id="previewFrame">
-          <video id="mainVideo" playsinline=""></video>
+          <video id="mainVideo" playsinline webkit-playsinline></video>
         </div>
         <div class="controls-bar">
           <button class="play-btn" id="playBtn">
             <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
           </button>
-          <div class="time-display mono"><span id="curTime">00:00</span> / <span id="durTime">00:00</span></div>
+          <div class="time-display mono"><span id="curTime">00:00</span> <a>/</a> <span id="durTime">00:00</span></div>
           <div class="scrub" id="scrub"><div class="fill" id="scrubFill"></div><div class="knob" id="scrubKnob"></div></div>
           <div class="vol">
             <svg viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 5V4L8 9H4z" stroke="#8B8B9C" stroke-width="1.6"></path></svg>
@@ -1096,8 +959,8 @@
 
       <div class="timeline-card">
         <div class="timeline-head">
-          <h3>الخط الزمني للمقاطع</h3>
-          <span class="note">اسحب الكتلة لتحريكها، واسحب طرفيها لتحديد بداية ونهاية ظهورها بالفيديو</span>
+          <h3>الخط الزمني</h3>
+          <span class="note">اسحب الكتلة لتحريكها</span>
         </div>
         <div class="timeline-scroll">
           <div class="timeline-inner" id="timelineInner">
@@ -1109,17 +972,41 @@
       </div>
 
       <div class="export-panel" id="exportPanel">
-        <video id="exportPreview" controls=""></video>
+        <video id="exportPreview" controls></video>
         <div class="txt">
           <h4>الفيديو النهائي جاهز</h4>
-          <p>تم دمج كل المقاطع المرئية والصوتية حسب التوقيت المحدد لكل منها. المقاطع التي فُعّل لها وضع "الصوت فقط" أُخفيت من الصورة وبقي صوتها مسموعًا.</p>
+          <p>تم دمج كل المقاطع المرئية والصوتية حسب التوقيت المحدد لكل منها.</p>
           <a class="dl-btn" id="downloadLink" download="فيديو-مدمج.webm">تنزيل الفيديو (WEBM)</a>
         </div>
       </div>
 
-      <p class="note">ملاحظة: التصدير يتم بالكامل داخل المتصفح عبر تسجيل المعاينة المباشرة، وينتج ملفًا بصيغة WEBM. لأفضل جودة، اترك المتصفح في المقدمة أثناء التصدير ولا تُصغّر النافذة.</p>
+      <p class="note">ملاحظة: التصدير يتم بالكامل داخل المتصفح عبر تسجيل المعاينة المباشرة.</p>
     </div>
   </main>
+
+  <aside class="sidebar" id="sidebarArea">
+    <h2>المقاطع المُضافة</h2>
+    <label class="add-clip-btn" for="clipInput">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+      إضافة مقطع فيديو أو صوت
+      <input type="file" id="clipInput" accept="video/*,audio/*" multiple="">
+    </label>
+
+    <div id="clipList"></div>
+    <div class="empty-hint" id="emptyHint">لم تُضف أي مقاطع بعد. اختر مقطعًا لإدراجه فوق الفيديو الأساسي في أي لحظة تريدها.</div>
+
+    <div class="inspector" id="inspector" style="display:none;"></div>
+  </aside>
+</div>
+
+<!-- Bottom Navigation Bar for Touch Devices -->
+<div class="bottom-nav" id="bottomNav">
+  <button id="navStageBtn" class="active" title="منطقة العرض والخط الزمني">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+  </button>
+  <button id="navSidebarBtn" title="القائمة الجانبية">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+  </button>
 </div>
 
 <script>
@@ -1136,6 +1023,13 @@
   const ruler = $('#ruler'), tracksWrap = $('#tracksWrap'), timelineInner = $('#timelineInner'), playhead = $('#playhead');
   const recCanvas = $('#recCanvas'), exportPanel = $('#exportPanel'), exportPreview = $('#exportPreview'), downloadLink = $('#downloadLink');
 
+  /* Touch Mode Navigation Handles */
+  const mainLayout = $('#mainLayout');
+  const stageArea = $('#stageArea');
+  const sidebarArea = $('#sidebarArea');
+  const navStageBtn = $('#navStageBtn');
+  const navSidebarBtn = $('#navSidebarBtn');
+
   let clips = []; 
   let selectedId = null;
   let mainDuration = 0;
@@ -1143,16 +1037,37 @@
   let audioCtx = null, recordDest = null;
   let rafId = null;
   let isExporting = false;
-  const PX_PER_SEC_MIN = 40;
 
   const fmt = t => { 
     t = Math.max(0, t || 0); 
     const m = Math.floor(t / 60), s = Math.floor(t % 60); 
     return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'); 
   };
-  const colorFor = c => c.hidden ? 'var(--audio)' : 'var(--video)';
 
-  /* ---------------- Main video load ---------------- */
+  /* ---------------- Touch Navigation Logic ---------------- */
+  if (navStageBtn && navSidebarBtn) {
+    navStageBtn.onclick = () => {
+      stageArea.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    navSidebarBtn.onclick = () => {
+      sidebarArea.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    mainLayout.addEventListener('scroll', () => {
+      const scrollLeft = Math.abs(mainLayout.scrollLeft);
+      const width = mainLayout.clientWidth;
+      if (scrollLeft > width / 2) {
+        navSidebarBtn.classList.add('active');
+        navStageBtn.classList.remove('active');
+      } else {
+        navStageBtn.classList.add('active');
+        navSidebarBtn.classList.remove('active');
+      }
+    });
+  }
+
+  /* ---------------- Main Video Setup ---------------- */
   mainPick.onclick = () => mainInput.click();
   mainInput.onchange = e => {
     const f = e.target.files[0]; 
@@ -1169,10 +1084,16 @@
     };
   };
 
-  playBtn.onclick = () => { 
-    ensureAudioCtx(); 
-    mainVideo.paused ? mainVideo.play() : mainVideo.pause(); 
+  playBtn.onclick = (e) => {
+    e.preventDefault();
+    ensureAudioCtx();
+    if (mainVideo.paused) {
+      mainVideo.play().catch(err => console.log(err));
+    } else {
+      mainVideo.pause();
+    }
   };
+
   mainVideo.onplay = () => setPlayIcon(true);
   mainVideo.onpause = () => setPlayIcon(false);
 
@@ -1192,8 +1113,7 @@
     const pct = mainDuration ? (mainVideo.currentTime / mainDuration) * 100 : 0;
     scrubFill.style.width = pct + '%';
     scrubKnob.style.insetInlineStart = pct + '%';
-    const tlPct = mainDuration ? (mainVideo.currentTime / mainDuration) * 100 : 0;
-    playhead.style.left = tlPct + '%';
+    playhead.style.left = pct + '%';
   }
 
   function seekTo(clientX, el){
@@ -1202,9 +1122,9 @@
     pct = Math.min(1, Math.max(0, pct));
     mainVideo.currentTime = pct * mainDuration;
     syncUI();
+    syncClips(mainVideo.currentTime, !mainVideo.paused);
   }
 
-  // Scrub Events Handling (Mouse + Touch)
   const handleScrubStart = e => {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     seekTo(clientX, scrub);
@@ -1230,11 +1150,40 @@
   scrub.addEventListener('mousedown', handleScrubStart);
   scrub.addEventListener('touchstart', handleScrubStart, {passive: false});
 
+  /* ---------------- Playhead Continuous Drag ---------------- */
+  const handlePlayheadDrag = e => {
+    e.preventDefault();
+    ensureAudioCtx();
+
+    const onMove = ev => {
+      const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+      seekTo(clientX, timelineInner);
+    };
+
+    const onEnd = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onEnd);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onEnd);
+    };
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onEnd);
+    document.addEventListener('touchmove', onMove, {passive: false});
+    document.addEventListener('touchend', onEnd);
+  };
+
+  playhead.addEventListener('mousedown', handlePlayheadDrag);
+  playhead.addEventListener('touchstart', handlePlayheadDrag, {passive: false});
+
   masterVol.oninput = () => mainVideo.volume = masterVol.value;
 
-  /* ---------------- Audio graph ---------------- */
+  /* ---------------- Audio Graph ---------------- */
   function ensureAudioCtx(){
-    if(audioCtx) return;
+    if(audioCtx) {
+      if(audioCtx.state === 'suspended') audioCtx.resume();
+      return;
+    }
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     recordDest = audioCtx.createMediaStreamDestination();
     connectMediaToGraph(mainVideo, 1);
@@ -1254,52 +1203,62 @@
     }
   }
 
-  /* ---------------- Clip management ---------------- */
+  /* ---------------- Clips Management ---------------- */
   clipInput.onchange = e => {
     [...e.target.files].forEach(f => addClip(f));
     clipInput.value = '';
   };
 
-  function addClip(file){
+  async function addClip(file){
     const type = file.type.startsWith('audio') ? 'audio' : 'video';
+    const objectUrl = URL.createObjectURL(file);
+    
     const el = document.createElement(type === 'video' ? 'video' : 'audio');
-    el.src = URL.createObjectURL(file);
+    el.src = objectUrl;
     el.preload = 'auto';
     el.playsInline = true;
-    el.style.display = 'none';
-    document.body.appendChild(el);
+    el.setAttribute('webkit-playsinline', 'true');
 
     const clip = {
-      id: idSeq++, name: file.name, type, url: el.src, el,
-      duration: 0, start: 0, end: 5, trimStart: 0,
+      id: idSeq++, name: file.name, type, url: objectUrl, el,
+      duration: 0, start: 0, end: 0, trimStart: 0,
       hidden: type === 'audio', volume: 1,
       position: 'full', gain: null, overlayEl: null
     };
 
-    el.onloadedmetadata = () => {
+    const processMetadata = () => {
       clip.duration = el.duration || 5;
-      const dur = Math.min(clip.duration, mainDuration || clip.duration || 5);
-      clip.end = Math.min((mainVideo.currentTime || 0) + dur, mainDuration || dur);
-      clip.start = mainVideo.currentTime || 0;
-      if(clip.end <= clip.start) clip.end = clip.start + Math.min(dur, 3);
+      clip.start = 0; 
+      clip.end = mainDuration ? Math.min(clip.duration, mainDuration) : clip.duration;
 
       if(type === 'video'){
         const ov = document.createElement('video');
         ov.src = clip.url; 
-        ov.muted = true; 
-        ov.playsInline = true; 
+        ov.playsInline = true;
+        ov.setAttribute('webkit-playsinline', 'true');
         ov.className = 'overlay-el';
         ov.style.display = 'none';
+        
         previewFrame.appendChild(ov);
         clip.overlayEl = ov;
         applyOverlayPosition(clip);
       }
+      
       clips.push(clip);
       selectedId = clip.id;
       renderClipList(); 
       renderTracks(); 
       renderInspector();
     };
+
+    if (el.readyState >= 1) {
+      processMetadata();
+    } else {
+      el.onloadedmetadata = processMetadata;
+      el.onerror = () => {
+        alert(`تعذر تحميل الملف: ${file.name}`);
+      };
+    }
   }
 
   function applyOverlayPosition(clip){
@@ -1316,7 +1275,7 @@
     ov.style.width = p.w; 
     ov.style.height = p.h; 
     ov.style.top = p.t; 
-    ov.style.insetInlineStart = p.l;
+    ov.style.left = p.l;
     ov.style.borderRadius = clip.position === 'full' ? '0' : '8px';
   }
 
@@ -1356,7 +1315,10 @@
     if(!c) return;
     c.el.pause(); 
     c.el.remove(); 
-    if(c.overlayEl) c.overlayEl.remove();
+    if(c.overlayEl) {
+      c.overlayEl.pause();
+      c.overlayEl.remove();
+    }
     clips = clips.filter(x => x.id !== id);
     if(selectedId === id) selectedId = clips.length ? clips[0].id : null;
     renderClipList(); 
@@ -1368,7 +1330,7 @@
     return s.replace(/[&<>"]/g, m => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[m])); 
   }
 
-  /* ---------------- Inspector ---------------- */
+  /* ---------------- Inspector Controls ---------------- */
   function renderInspector(){
     const c = clips.find(x => x.id === selectedId);
     if(!c){ 
@@ -1416,7 +1378,13 @@
     $('#fStart').onchange = e => { c.start = parseTimeStr(e.target.value, c.start); clampClip(c); renderTracks(); renderClipList(); };
     $('#fEnd').onchange = e => { c.end = parseTimeStr(e.target.value, c.end); clampClip(c); renderTracks(); renderClipList(); };
     $('#fPos').onchange = e => { c.position = e.target.value; applyOverlayPosition(c); };
-    $('#fVol').oninput = e => { c.volume = parseFloat(e.target.value); if(c.gain) c.gain.gain.value = c.volume; renderInspector(); };
+    $('#fVol').oninput = e => { 
+      c.volume = parseFloat(e.target.value); 
+      if(c.gain) c.gain.gain.value = c.volume; 
+      if(c.overlayEl) c.overlayEl.volume = c.volume;
+      if(c.el) c.el.volume = c.volume;
+      renderInspector(); 
+    };
     if(c.type === 'video'){
       $('#fHide').onclick = () => { c.hidden = !c.hidden; renderInspector(); renderClipList(); renderTracks(); };
     }
@@ -1435,10 +1403,9 @@
     c.end = Math.max(c.start + 0.2, Math.min(c.end, mainDuration));
   }
 
-  /* ---------------- Timeline ---------------- */
+  /* ---------------- Timeline Rendering ---------------- */
   function buildRuler(){
     ruler.innerHTML = '';
-    const width = Math.max(timelineInner.clientWidth || 700, mainDuration * PX_PER_SEC_MIN * 0.15);
     let step = 5;
     if(mainDuration > 600) step = 60; 
     else if(mainDuration > 180) step = 30; 
@@ -1461,10 +1428,13 @@
       row.className = 'track-row';
       const block = document.createElement('div');
       block.className = 'clip-block' + (c.hidden ? ' hiddenclip' : '') + (c.id === selectedId ? ' selectedblock' : '');
+      
       const leftPct = (c.start / mainDuration) * 100;
       const widthPct = ((c.end - c.start) / mainDuration) * 100;
+      
       block.style.left = leftPct + '%'; 
       block.style.width = widthPct + '%';
+      
       block.innerHTML = `<span>${escapeHtml(c.name)}</span><div class="handle l"></div><div class="handle r"></div>`;
       
       block.addEventListener('mousedown', e => startDrag(e, c, block, row));
@@ -1479,10 +1449,11 @@
   function startDrag(e, c, block, row){
     e.preventDefault();
     selectedId = c.id; 
-    renderClipList(); 
-    renderInspector();
+    
     document.querySelectorAll('.clip-block').forEach(b => b.classList.remove('selectedblock'));
     block.classList.add('selectedblock');
+    renderClipList(); 
+    renderInspector();
 
     const isHandleL = e.target.classList.contains('l');
     const isHandleR = e.target.classList.contains('r');
@@ -1527,43 +1498,49 @@
 
   const handleRulerClick = e => {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const rect = ruler.getBoundingClientRect();
-    let pct = (clientX - rect.left) / rect.width; 
-    pct = Math.min(1, Math.max(0, pct));
-    mainVideo.currentTime = pct * mainDuration; 
-    syncUI();
+    seekTo(clientX, ruler);
   };
 
-  ruler.addEventListener('click', handleRulerClick);
+  ruler.addEventListener('mousedown', handleRulerClick);
   ruler.addEventListener('touchstart', handleRulerClick);
 
-  /* ---------------- Clip playback sync ---------------- */
+  /* ---------------- Synchronization ---------------- */
   function syncClips(t, playing){
     clips.forEach(c => {
       const active = t >= c.start && t < c.end;
-      if(!c.gain && audioCtx) c.gain = connectMediaToGraph(c.el, c.volume);
+      const mediaEl = c.overlayEl || c.el;
+
+      if(!c.gain && audioCtx) {
+        c.gain = connectMediaToGraph(mediaEl, c.volume);
+      }
+
       if(active){
-        const inner = c.trimStart + (t - c.start);
-        if(inner >= 0 && inner <= c.duration){
-          if(Math.abs(c.el.currentTime - inner) > 0.28) { 
-            try { c.el.currentTime = inner; } catch(e){} 
+        const innerTime = c.trimStart + (t - c.start);
+        
+        if(innerTime >= 0 && innerTime <= c.duration){
+          if(Math.abs(mediaEl.currentTime - innerTime) > 0.25) { 
+            try { mediaEl.currentTime = innerTime; } catch(e){} 
           }
-          if(playing && c.el.paused) c.el.play().catch(() => {});
-          if(!playing && !c.el.paused) c.el.pause();
-        } else if(!c.el.paused){ 
-          c.el.pause(); 
+          if(playing && mediaEl.paused) {
+            mediaEl.play().catch(() => {});
+          } else if(!playing && !mediaEl.paused) {
+            mediaEl.pause();
+          }
+        } else if(!mediaEl.paused){ 
+          mediaEl.pause(); 
         }
+
         if(c.overlayEl){
           c.overlayEl.style.display = c.hidden ? 'none' : 'block';
         }
       } else {
-        if(!c.el.paused) c.el.pause();
+        if(!mediaEl.paused) mediaEl.pause();
         if(c.overlayEl) c.overlayEl.style.display = 'none';
       }
     });
   }
 
-  /* ---------------- Export (record composite) ---------------- */
+  /* ---------------- Video Export ---------------- */
   exportBtn.onclick = async () => {
     if(isExporting || !mainVideo.src) return;
     ensureAudioCtx();
@@ -1578,7 +1555,11 @@
     const ctx = recCanvas.getContext('2d');
 
     mainVideo.pause();
-    clips.forEach(c => { c.el.pause(); c.el.currentTime = c.trimStart; });
+    clips.forEach(c => { 
+      const activeEl = c.overlayEl || c.el;
+      activeEl.pause(); 
+      activeEl.currentTime = c.trimStart; 
+    });
     mainVideo.currentTime = 0;
     await new Promise(r => setTimeout(r, 150));
 
@@ -1603,7 +1584,6 @@
       exportBtnTxt.textContent = 'تصدير الفيديو النهائي';
       cancelAnimationFrame(rafId);
 
-      /* التنزيل التلقائي الفوري فور اكتمال التسجيل */
       const autoA = document.createElement('a');
       autoA.href = url;
       autoA.download = 'فيديو-مدمج.webm';
@@ -1616,10 +1596,10 @@
       ctx.drawImage(mainVideo, 0, 0, vw, vh);
       const t = mainVideo.currentTime;
       clips.forEach(c => {
-        if(c.type !== 'video' || c.hidden) return;
-        if(t >= c.start && t < c.end && c.el.readyState >= 2){
+        if(c.type !== 'video' || c.hidden || !c.overlayEl) return;
+        if(t >= c.start && t < c.end && c.overlayEl.readyState >= 2){
           const rect = overlayRectFor(c.position, vw, vh);
-          ctx.drawImage(c.el, rect.x, rect.y, rect.w, rect.h);
+          ctx.drawImage(c.overlayEl, rect.x, rect.y, rect.w, rect.h);
         }
       });
       syncClips(t, true);
@@ -1646,100 +1626,5 @@
   window.addEventListener('resize', () => { if(mainDuration) buildRuler(); });
 })();
 </script>
-
-
-<!-- <div id="anti-overlay-blocker">
-  <style>
-    #anti-overlay-blocker {
-      position: fixed !important;
-      transition: 0.3s;
-      direction: ltr;
-      user-select: none;
-      right: 0px !important;
-      bottom: max(16px, calc(50px + env(safe-area-inset-bottom, 0px))) !important;
-      z-index: 99999999999999 !important;
-      display: flex !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      padding: 0 !important;
-      border-radius: 10px 0px 0px 10px;
-      background-color: rgb(17, 24, 39) !important;
-      color: rgb(255, 255, 255) !important;
-      font-family: system-ui;
-      font-size: 14px !important;
-      line-height: 1.2 !important;
-      box-shadow: rgba(0, 0, 0, 0.3) 0px 6px 20px !important;
-      pointer-events: auto !important;
-      box-sizing: border-box !important;
-      max-width: calc(100vw - 12px) !important;
-      max-height: calc(100vh - 32px - env(safe-area-inset-bottom, 0px)) !important;
-      overflow: hidden !important;
-      margin: 0 !important;
-      transform: translateZ(0) !important;
-      contain: layout paint !important;
-      width: 50px;
-    }
-    
-    #anti-overlay-blocker:hover,
-    #anti-overlay-blocker.aob-auto-hover {
-      width: 203px !important;
-    }
-    
-    #anti-overlay-blocker:hover .dde3e-ee435,
-    #anti-overlay-blocker.aob-auto-hover .dde3e-ee435 {
-      opacity: 1;
-    }
-    
-    #fefgg0-21-4593 {
-      position: relative;
-      z-index: 10;
-      padding: 25px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: white;
-      border-radius: 9px 0px 0px 9px;
-      box-shadow: 0 0 0 1px #121726 inset;
-    }
-    
-    #fefgg0-21-4593 svg {
-      position: absolute;
-      max-width: 20px;
-      max-height: 20px;
-      width: auto;
-      height: auto;
-      display: block;
-      border-radius: 30px;
-    }
-    
-    #fefgg0-21-4593 path, #fefgg0-21-4593 svg {
-      fill: revert-layer !important;
-    }
-    
-    .dde3e-ee435 {
-      transition: 0.3s;
-      padding: 8px 10px 8px 8px;
-      opacity: 0;
-    }
-    
-    .dde3e-ee435 div, .dde3e-ee435 span {
-      display: block;
-      width: max-content;
-    }
-  </style>
-  <div id="fefgg0-21-4593">
-    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 256 256">
-      <path d="M0 0 C1.5 0.529 3.001 1.057 4.502 1.584 C21.444 7.576 38.245 13.972 55.035 20.375 C55.857 20.688 56.678 21.001 57.525 21.324 C59.894 22.231 62.26 23.145 64.625 24.062 C65.515 24.405 66.406 24.747 67.323 25.1 C68.21 25.446 69.096 25.792 70.01 26.148 C70.811 26.46 71.613 26.771 72.439 27.091 C77.677 29.418 80.766 32.56 82.949 37.945 C84.275 42.097 84.7 46.37 85.188 50.688 C85.249 51.209 85.249 51.209 85.558 53.849 C96.412 150.498 96.412 150.498 68.898 185.336 C65.259 189.701 61.539 193.941 57.625 198.062 C56.72 199.02 55.815 199.978 54.883 200.965 C48.181 207.928 41.016 213.992 33.299 219.798 C31.745 220.972 30.206 222.167 28.668 223.363 C-8.38 251.897 -8.38 251.897 -22.961 251.633 C-47.116 247.598 -73.15 223.044 -90.656 206.57 C-92.581 204.795 -94.499 203.113 -96.52 201.457 C-100.276 198.307 -103.256 194.831 -106.375 191.062 C-106.789 190.576 -107.204 190.09 -107.631 189.589 C-135.061 157.301 -133.345 115.665 -130.368 75.401 C-127.156 37.177 -127.156 37.177 -120.367 31.14 C-116.318 27.769 -112.089 25.963 -107.184 24.148 C-106.312 23.813 -105.44 23.478 -104.542 23.133 C-101.825 22.093 -99.101 21.076 -96.375 20.062 C-94.708 19.435 -93.042 18.808 -91.375 18.181 C-86.407 16.321 -81.424 14.499 -76.438 12.688 C-75.56 12.368 -74.682 12.049 -73.778 11.721 C-69.321 10.102 -64.862 8.488 -60.402 6.879 C-57.216 5.73 -54.032 4.573 -50.852 3.406 C-46.908 1.959 -42.955 0.54 -39 -0.875 C-38.434 -1.084 -38.434 -1.084 -35.571 -2.144 C-22.354 -6.797 -12.86 -4.651 0 0 Z " fill="#73DA7E" transform="translate(149.375,4.9375)"></path>
-      <path d="M0 0 C4.026 1.459 8.046 2.935 12.061 4.425 C13.424 4.929 14.79 5.428 16.157 5.923 C18.133 6.639 20.102 7.371 22.07 8.105 C23.254 8.54 24.437 8.975 25.657 9.423 C31.089 11.986 35.293 15.112 37.445 20.964 C38.58 25.126 39.08 29.346 39.562 33.625 C39.624 34.147 39.624 34.147 39.933 36.787 C50.787 133.435 50.787 133.435 23.273 168.273 C19.634 172.638 15.914 176.878 12 181 C11.095 181.958 10.19 182.916 9.258 183.902 C2.556 190.866 -4.609 196.929 -12.326 202.736 C-13.88 203.91 -15.419 205.104 -16.957 206.301 C-54.005 234.834 -54.005 234.834 -68.586 234.57 C-92.741 230.535 -118.775 205.982 -136.281 189.508 C-138.209 187.729 -140.107 186.111 -142.156 184.492 C-144.851 182.13 -146.375 180.16 -148 177 C-147.438 177.016 -146.877 177.031 -146.298 177.048 C-106.067 178.015 -68.367 166.561 -38.687 138.659 C-23.465 123.924 -12.78 106.653 -5 87 C-4.801 86.519 -4.801 86.519 -3.793 84.086 C1.896 69.64 3.196 54.315 3.188 38.938 C3.187 37.644 3.187 36.35 3.187 35.017 C3.134 26.14 2.491 17.75 1 9 C0.636 6.003 0.311 3.003 0 0 Z " fill="#2AD352" transform="translate(195,22)"></path>
-      <path d="M0 0 C4.575 3.405 8.861 7.521 10.688 13 C11.123 19.539 10.413 24.571 6.248 29.811 C1.276 35.451 -3.986 40.737 -9.352 46 C-13.272 49.875 -16.969 53.855 -20.566 58.031 C-23.499 61.338 -26.658 64.407 -29.812 67.5 C-34.22 71.86 -38.502 76.229 -42.504 80.969 C-46.426 85.374 -50.696 89.465 -54.9 93.598 C-56.277 94.965 -57.627 96.357 -58.977 97.75 C-62.971 101.598 -67.278 103.152 -72.75 103.5 C-82.575 102.925 -89.309 94.413 -95.785 87.808 C-97.368 86.195 -98.961 84.592 -100.557 82.99 C-106.01 77.495 -111.292 71.897 -116.312 66 C-117.02 65.211 -117.728 64.422 -118.457 63.609 C-119.007 62.996 -119.558 62.382 -120.125 61.75 C-120.688 61.126 -121.252 60.502 -121.832 59.859 C-125.256 55.559 -125.819 52.008 -125.684 46.598 C-124.939 41.388 -122.371 37.954 -118.621 34.395 C-113.785 30.79 -109.254 30.442 -103.34 30.434 C-94.97 32 -89.814 38.128 -84.125 44 C-83.728 44.403 -83.728 44.403 -81.721 46.445 C-80.246 47.946 -78.775 49.449 -77.308 50.957 C-75.325 52.987 -73.323 54.997 -71.312 57 C-71.049 56.41 -70.786 55.82 -70.514 55.212 C-69.26 52.904 -67.961 51.433 -66.082 49.609 C-65.447 48.986 -64.813 48.363 -64.159 47.722 C-63.488 47.071 -62.817 46.42 -62.125 45.75 C-57.582 41.284 -53.157 36.826 -49.047 31.953 C-46.293 28.852 -43.311 25.979 -40.361 23.068 C-37.712 20.441 -35.173 17.773 -32.75 14.938 C-23.164 3.753 -15.644 -4.723 0 0 Z " fill="#FDFEFD" transform="translate(185.3125,73)"></path>
-      <path d="M0 0 C0.33 1.32 0.66 2.64 1 4 C0.429 4.499 -0.142 4.998 -0.73 5.512 C-8.119 12.055 -15.073 18.975 -22 26 C-22 23 -22 23 -20.088 20.763 C-19.215 19.912 -18.341 19.061 -17.441 18.184 C-16.978 17.726 -16.514 17.269 -16.036 16.798 C-14.552 15.337 -13.058 13.887 -11.562 12.438 C-10.073 10.983 -8.585 9.526 -7.1 8.066 C-5.751 6.742 -4.396 5.424 -3.041 4.107 C-1 2 -1 2 0 0 Z " fill="#7EDD89" transform="translate(192,101)"></path>
-    </svg>
-  </div>
-  <div class="dde3e-ee435">
-    <span style="font-weight: 700 !important;">Anti Overlay Blocker</span>
-    <div id="aob-blocked-ads-count" style="opacity: .7;">0 ads blocked</div>
-  </div>
-</div> -->
-
 </body>
 </html>
