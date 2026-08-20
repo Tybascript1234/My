@@ -696,10 +696,12 @@
     cursor: ew-resize;
     touch-action: none;
     z-index: 6;
+    background: rgba(255, 255, 255, 0.3);
+    transition: background 0.2s;
   }
   
-  .handle:hover {
-    background: rgba(255, 255, 255, 0.7);
+  .handle:hover, .handle:active {
+    background: rgba(255, 255, 255, 0.8);
   }
 
   .handle.l {
@@ -904,6 +906,8 @@
       justify-content: space-around;
       align-items: center;
       width: 100%;
+      padding: 0 20px;
+      gap: 20px;
     }
 
     .bottom-nav button {
@@ -915,6 +919,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 0 0 10px #0e0e13 inset;
+      border-radius: 40px;
       transition: color 0.2s, background 0.2s;
     }
 
@@ -995,7 +1001,7 @@
       <div class="timeline-card">
         <div class="timeline-head">
           <h3>الخط الزمني</h3>
-          <span class="note">اسحب الكتلة لتحريكها</span>
+          <span class="note">اسحب الجوانب للتكبير/التصغير واسحب الكتلة لتحريكها</span>
         </div>
         <div class="timeline-scroll" id="timelineScroll">
           <div class="timeline-inner" id="timelineInner">
@@ -1273,7 +1279,6 @@
       clip.duration = el.duration || 5;
       clip.start = 0; 
 
-      // حساب العرض الابتدائي كنسبة مئوية من زمن الفيديو الأساسي تعادل تقريباً 170px
       const totalWidth = timelineInner.clientWidth || 800;
       const initialSec = (170 / totalWidth) * (mainDuration || 10);
 
@@ -1504,6 +1509,7 @@
     if(clips.length) playhead.style.height = (clips.length * 44 + 22) + 'px';
   }
 
+  /* ---------------- Drag & Resize Handler (Zooming via handles) ---------------- */
   function startDrag(e, c, block, row){
     e.preventDefault();
     e.stopPropagation();
@@ -1527,22 +1533,38 @@
       const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
       const deltaX = clientX - startX;
       const dx = deltaX * secPerPx;
+      
       if(isHandleL){
+        // تكبير/تصغير وتمديد المقطع من الجهة اليسرى
         c.start = Math.max(0, Math.min(origStart + dx, origEnd - 0.3));
       } else if(isHandleR){
+        // تكبير/تصغير وتمديد المقطع من الجهة اليمنى
         c.end = Math.min(mainDuration, Math.max(origEnd + dx, origStart + 0.3));
       } else {
+        // تحريك المقطع بالكامل عبر السحب
         const dur = origEnd - origStart;
         let ns = origStart + dx;
         ns = Math.max(0, Math.min(ns, mainDuration - dur));
         c.start = ns; 
         c.end = ns + dur;
-        timelineScroll.scrollLeft = initialScrollLeft + deltaX;
       }
+
+      // تحديث مظهر المقطع وتزامنه مع شريط الثواني والشريط الزمني
       const leftPct = (c.start / mainDuration) * 100;
       const widthPct = ((c.end - c.start) / mainDuration) * 100;
       block.style.left = leftPct + '%'; 
       block.style.width = widthPct + '%';
+      
+      // التمرير التلقائي للاستجابة للسحب
+      const blockPixelLeft = (leftPct / 100) * rowRect.width;
+      if (isHandleL) {
+        timelineScroll.scrollLeft = blockPixelLeft - 20;
+      } else if (isHandleR) {
+        timelineScroll.scrollLeft = blockPixelLeft + ((widthPct / 100) * rowRect.width) - timelineScroll.clientWidth + 20;
+      } else {
+        timelineScroll.scrollLeft = initialScrollLeft + deltaX;
+      }
+
       renderInspector();
     }
 
@@ -1551,7 +1573,9 @@
       document.removeEventListener('mouseup', onUp);
       document.removeEventListener('touchmove', onMove);
       document.removeEventListener('touchend', onUp);
+      buildRuler();
       renderClipList();
+      renderTracks();
     }
 
     document.addEventListener('mousemove', onMove);
