@@ -535,6 +535,7 @@
     background: var(--video);
     border-radius: 6px;
     width: 0%;
+    transition: width 0.1s linear;
   }
   
   .scrub .knob {
@@ -548,6 +549,7 @@
     margin-left: -20px;
     inset-inline-start: 0%;
     box-shadow: 0 1px 4px rgba(0,0,0,.4);
+    transition: inset-inline-start 0.1s linear;
   }
   
   .vol {
@@ -588,7 +590,7 @@
   .timeline-scroll {
     overflow-x: auto;
     overflow-y: hidden;
-    scrollbar-width: none;
+    scrollbar-width: thin;
     padding-bottom: 8px;
     position: relative;
     width: 100%;
@@ -672,7 +674,6 @@
     outline-offset: -1px;
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
     z-index: 5;
-    max-width: 200px !important;
   }
 
   .clip-block.selectedblock:active {
@@ -691,17 +692,26 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 18px;
+    width: 12px;
     cursor: ew-resize;
     touch-action: none;
+    z-index: 6;
   }
   
+  .handle:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
+
   .handle.l {
     left: 0;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
   }
   
   .handle.r {
     right: 0;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
   }
   
   .playhead {
@@ -713,7 +723,6 @@
     cursor: e-resize;
     touch-action: none;
     user-select: none;
-    transition: left 0.1s ease-out;
   }
 
   .playhead::after {
@@ -941,7 +950,7 @@
 
 <div class="layout" id="mainLayout">
 
-    <aside class="sidebar" id="sidebarArea">
+  <aside class="sidebar" id="sidebarArea">
     <h2>المقاطع المُضافة</h2>
     <label class="add-clip-btn" for="clipInput">
       <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
@@ -1131,11 +1140,12 @@
     const containerWidth = timelineScroll.clientWidth;
     const playheadPos = (pct / 100) * scrollWidth;
     
-    const targetScroll = playheadPos - containerWidth / 2;
-    timelineScroll.scrollTo({
-      left: Math.max(0, targetScroll),
-      behavior: 'smooth'
-    });
+    if (playheadPos < timelineScroll.scrollLeft || playheadPos > timelineScroll.scrollLeft + containerWidth - 50) {
+      timelineScroll.scrollTo({
+        left: playheadPos - containerWidth / 2,
+        behavior: 'smooth'
+      });
+    }
   }
 
   function syncUI(){
@@ -1262,7 +1272,12 @@
     const processMetadata = () => {
       clip.duration = el.duration || 5;
       clip.start = 0; 
-      clip.end = mainDuration ? Math.min(clip.duration, mainDuration) : clip.duration;
+
+      // حساب العرض الابتدائي كنسبة مئوية من زمن الفيديو الأساسي تعادل تقريباً 170px
+      const totalWidth = timelineInner.clientWidth || 800;
+      const initialSec = (170 / totalWidth) * (mainDuration || 10);
+
+      clip.end = mainDuration ? Math.min(initialSec, mainDuration) : Math.min(clip.duration, 5);
 
       if(type === 'video'){
         const ov = document.createElement('video');
@@ -1282,7 +1297,6 @@
       renderClipList(); 
       renderTracks(); 
       renderInspector();
-      scrollToClip(clip);
     };
 
     if (el.readyState >= 1) {
@@ -1335,7 +1349,6 @@
         renderClipList(); 
         renderTracks(); 
         renderInspector(); 
-        scrollToClip(c);
       };
       clipList.appendChild(card);
     });
@@ -1376,14 +1389,14 @@
     inspector.innerHTML = `
       <h2>خصائص المقطع</h2>
       <div class="field">
-        <label>وقت البداية بالفيديو الأساسي</label>
+        <label>وقت البداية والنهاية</label>
         <div class="time-row">
           <input class="mono" id="fStart" value="${fmt(c.start)}">
           <input class="mono" id="fEnd" value="${fmt(c.end)}">
         </div>
       </div>
       <div class="field">
-        <label>موضع الظهور على الشاشة <span class="mono">${c.hidden ? '(غير ظاهر)' : ''}</span></label>
+        <label>موضِع الظهور <span class="mono">${c.hidden ? '(غير ظاهر)' : ''}</span></label>
         <select class="field-select" id="fPos" ${c.type === 'audio' || c.hidden ? 'disabled' : ''}>
           <option value="full">ملء الشاشة</option>
           <option value="tl">أعلى اليسار</option>
@@ -1410,8 +1423,8 @@
       </button>
     `;
     $('#fPos').value = c.position;
-    $('#fStart').onchange = e => { c.start = parseTimeStr(e.target.value, c.start); clampClip(c); renderTracks(); renderClipList(); scrollToClip(c); };
-    $('#fEnd').onchange = e => { c.end = parseTimeStr(e.target.value, c.end); clampClip(c); renderTracks(); renderClipList(); scrollToClip(c); };
+    $('#fStart').onchange = e => { c.start = parseTimeStr(e.target.value, c.start); clampClip(c); renderTracks(); renderClipList(); };
+    $('#fEnd').onchange = e => { c.end = parseTimeStr(e.target.value, c.end); clampClip(c); renderTracks(); renderClipList(); };
     $('#fPos').onchange = e => { c.position = e.target.value; applyOverlayPosition(c); };
     $('#fVol').oninput = e => { 
       c.volume = parseFloat(e.target.value); 
@@ -1465,27 +1478,14 @@
     }
   }
 
-  function scrollToClip(clip){
-    if(!mainDuration || !clip) return;
-    const clipStartPct = (clip.start / mainDuration);
-    const scrollWidth = timelineInner.clientWidth;
-    const containerWidth = timelineScroll.clientWidth;
-    const targetScroll = (clipStartPct * scrollWidth) - (containerWidth / 2);
-    timelineScroll.scrollTo({
-      left: Math.max(0, targetScroll),
-      behavior: 'smooth'
-    });
-    mainVideo.currentTime = clip.start;
-    syncUI();
-  }
-
   function renderTracks(){
     tracksWrap.innerHTML = '';
     clips.forEach(c => {
       const row = document.createElement('div');
       row.className = 'track-row';
       const block = document.createElement('div');
-      block.className = 'clip-block' + (c.hidden ? ' hiddenclip' : '') + (c.id === selectedId ? ' selectedblock' : '');
+      const isSelected = c.id === selectedId;
+      block.className = 'clip-block' + (c.hidden ? ' hiddenclip' : '') + (isSelected ? ' selectedblock' : '');
       
       const leftPct = (c.start / mainDuration) * 100;
       const widthPct = ((c.end - c.start) / mainDuration) * 100;
@@ -1506,13 +1506,14 @@
 
   function startDrag(e, c, block, row){
     e.preventDefault();
+    e.stopPropagation();
+    
     selectedId = c.id; 
     
     document.querySelectorAll('.clip-block').forEach(b => b.classList.remove('selectedblock'));
     block.classList.add('selectedblock');
     renderClipList(); 
     renderInspector();
-    scrollToClip(c);
 
     const isHandleL = e.target.classList.contains('l');
     const isHandleR = e.target.classList.contains('r');
@@ -1520,10 +1521,12 @@
     const startX = e.touches ? e.touches[0].clientX : e.clientX;
     const origStart = c.start, origEnd = c.end;
     const secPerPx = mainDuration / rowRect.width;
+    const initialScrollLeft = timelineScroll.scrollLeft;
 
     function onMove(ev){
       const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
-      const dx = (clientX - startX) * secPerPx;
+      const deltaX = clientX - startX;
+      const dx = deltaX * secPerPx;
       if(isHandleL){
         c.start = Math.max(0, Math.min(origStart + dx, origEnd - 0.3));
       } else if(isHandleR){
@@ -1534,11 +1537,13 @@
         ns = Math.max(0, Math.min(ns, mainDuration - dur));
         c.start = ns; 
         c.end = ns + dur;
+        timelineScroll.scrollLeft = initialScrollLeft + deltaX;
       }
       const leftPct = (c.start / mainDuration) * 100;
       const widthPct = ((c.end - c.start) / mainDuration) * 100;
       block.style.left = leftPct + '%'; 
       block.style.width = widthPct + '%';
+      renderInspector();
     }
 
     function onUp(){
@@ -1555,13 +1560,16 @@
     document.addEventListener('touchend', onUp);
   }
 
-  const handleRulerClick = e => {
+  const handleTimelineClick = e => {
+    if(e.target.closest('.clip-block')) return;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     seekTo(clientX, timelineInner);
   };
 
-  ruler.addEventListener('mousedown', handleRulerClick);
-  ruler.addEventListener('touchstart', handleRulerClick);
+  ruler.addEventListener('mousedown', handleTimelineClick);
+  ruler.addEventListener('touchstart', handleTimelineClick);
+  tracksWrap.addEventListener('mousedown', handleTimelineClick);
+  tracksWrap.addEventListener('touchstart', handleTimelineClick);
 
   /* ---------------- Synchronization ---------------- */
   function syncClips(t, playing){
