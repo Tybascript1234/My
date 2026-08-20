@@ -592,6 +592,7 @@
     padding-bottom: 8px;
     position: relative;
     width: 100%;
+    scroll-behavior: smooth;
   }
   
   .timeline-inner {
@@ -658,6 +659,7 @@
     user-select: none;
     touch-action: none;
     box-sizing: border-box;
+    max-width: 100%;
   }
   
   .clip-block.hiddenclip {
@@ -670,6 +672,7 @@
     outline-offset: -1px;
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
     z-index: 5;
+    max-width: 200px !important;
   }
 
   .clip-block.selectedblock:active {
@@ -710,6 +713,7 @@
     cursor: e-resize;
     touch-action: none;
     user-select: none;
+    transition: left 0.1s ease-out;
   }
 
   .playhead::after {
@@ -1127,9 +1131,11 @@
     const containerWidth = timelineScroll.clientWidth;
     const playheadPos = (pct / 100) * scrollWidth;
     
-    if (playheadPos < timelineScroll.scrollLeft || playheadPos > timelineScroll.scrollLeft + containerWidth - 50) {
-      timelineScroll.scrollLeft = playheadPos - containerWidth / 2;
-    }
+    const targetScroll = playheadPos - containerWidth / 2;
+    timelineScroll.scrollTo({
+      left: Math.max(0, targetScroll),
+      behavior: 'smooth'
+    });
   }
 
   function syncUI(){
@@ -1276,6 +1282,7 @@
       renderClipList(); 
       renderTracks(); 
       renderInspector();
+      scrollToClip(clip);
     };
 
     if (el.readyState >= 1) {
@@ -1328,6 +1335,7 @@
         renderClipList(); 
         renderTracks(); 
         renderInspector(); 
+        scrollToClip(c);
       };
       clipList.appendChild(card);
     });
@@ -1402,8 +1410,8 @@
       </button>
     `;
     $('#fPos').value = c.position;
-    $('#fStart').onchange = e => { c.start = parseTimeStr(e.target.value, c.start); clampClip(c); renderTracks(); renderClipList(); };
-    $('#fEnd').onchange = e => { c.end = parseTimeStr(e.target.value, c.end); clampClip(c); renderTracks(); renderClipList(); };
+    $('#fStart').onchange = e => { c.start = parseTimeStr(e.target.value, c.start); clampClip(c); renderTracks(); renderClipList(); scrollToClip(c); };
+    $('#fEnd').onchange = e => { c.end = parseTimeStr(e.target.value, c.end); clampClip(c); renderTracks(); renderClipList(); scrollToClip(c); };
     $('#fPos').onchange = e => { c.position = e.target.value; applyOverlayPosition(c); };
     $('#fVol').oninput = e => { 
       c.volume = parseFloat(e.target.value); 
@@ -1457,6 +1465,20 @@
     }
   }
 
+  function scrollToClip(clip){
+    if(!mainDuration || !clip) return;
+    const clipStartPct = (clip.start / mainDuration);
+    const scrollWidth = timelineInner.clientWidth;
+    const containerWidth = timelineScroll.clientWidth;
+    const targetScroll = (clipStartPct * scrollWidth) - (containerWidth / 2);
+    timelineScroll.scrollTo({
+      left: Math.max(0, targetScroll),
+      behavior: 'smooth'
+    });
+    mainVideo.currentTime = clip.start;
+    syncUI();
+  }
+
   function renderTracks(){
     tracksWrap.innerHTML = '';
     clips.forEach(c => {
@@ -1490,6 +1512,7 @@
     block.classList.add('selectedblock');
     renderClipList(); 
     renderInspector();
+    scrollToClip(c);
 
     const isHandleL = e.target.classList.contains('l');
     const isHandleR = e.target.classList.contains('r');
