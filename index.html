@@ -586,8 +586,8 @@
   }
   
   .timeline-scroll {
-    overflow-x: auto;
-    overflow-y: visible;
+    /* overflow-x: auto;
+    overflow-y: visible; */
     padding-bottom: 6px;
   }
   
@@ -728,9 +728,9 @@
     transform: translateX(-50%) rotate(45deg);
     width: 10px;
     height: 10px;
-    background: #fff;
     border-radius: 2px;
     z-index: 2;
+    background: linear-gradient(135deg, #16161f 0% 50%, #ffffff 50% 100%);
   }
 
   .export-panel {
@@ -821,6 +821,10 @@
   @media (hover: none) and (pointer: coarse) {
     #durTime, .vol, #exportBtnTxt, .time-display a { display: none !important; }
     
+    header {
+      border: none;
+    }
+
     body {
       overflow-x: hidden;
       display: flex;
@@ -860,6 +864,7 @@
       max-height: 100% !important;
       border-inline-start: none !important;
       border-bottom: none !important;
+      background: #0000;
     }
 
     .stage-area {
@@ -878,7 +883,8 @@
       /* left: 0; */
       /* right: 0; */
       height: 60px;
-      background: var(--panel);
+      /* background: var(--panel); */
+      border: none !important;
       border-top: 1px solid var(--border);
       z-index: 1000;
       justify-content: space-around;
@@ -929,6 +935,21 @@
 </header>
 
 <div class="layout" id="mainLayout">
+
+    <aside class="sidebar" id="sidebarArea">
+    <h2>المقاطع المُضافة</h2>
+    <label class="add-clip-btn" for="clipInput">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+      إضافة مقطع فيديو أو صوت
+      <input type="file" id="clipInput" accept="video/*,audio/*" multiple="">
+    </label>
+
+    <div id="clipList"></div>
+    <div class="empty-hint" id="emptyHint">لم تُضف أي مقاطع بعد. اختر مقطعًا لإدراجه فوق الفيديو الأساسي في أي لحظة تريدها.</div>
+
+    <div class="inspector" id="inspector" style="display:none;"></div>
+  </aside>
+
   <main class="stage-area" id="stageArea">
     <div id="noVideoBox" class="no-video">
       <svg viewBox="0 0 24 24" width="34" height="34" fill="none"><path d="M4 6h16v12H4z" stroke="#5E5E70" stroke-width="1.6"></path><path d="M9 9.5l6 2.5-6 2.5v-5z" fill="#5E5E70"></path></svg>
@@ -983,20 +1004,6 @@
       <p class="note">ملاحظة: التصدير يتم بالكامل داخل المتصفح عبر تسجيل المعاينة المباشرة.</p>
     </div>
   </main>
-
-  <aside class="sidebar" id="sidebarArea">
-    <h2>المقاطع المُضافة</h2>
-    <label class="add-clip-btn" for="clipInput">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
-      إضافة مقطع فيديو أو صوت
-      <input type="file" id="clipInput" accept="video/*,audio/*" multiple="">
-    </label>
-
-    <div id="clipList"></div>
-    <div class="empty-hint" id="emptyHint">لم تُضف أي مقاطع بعد. اختر مقطعًا لإدراجه فوق الفيديو الأساسي في أي لحظة تريدها.</div>
-
-    <div class="inspector" id="inspector" style="display:none;"></div>
-  </aside>
 </div>
 
 <!-- Bottom Navigation Bar for Touch Devices -->
