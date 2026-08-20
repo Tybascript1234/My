@@ -586,15 +586,17 @@
   }
   
   .timeline-scroll {
-    /* overflow-x: auto; */
-    /* overflow-y: visible; */
-    padding-bottom: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 8px;
+    position: relative;
+    width: 100%;
   }
   
   .timeline-inner {
     direction: ltr;
     position: relative;
-    min-width: 100%;
+    width: auto !important;
   }
   
   .ruler {
@@ -627,6 +629,7 @@
     color: var(--muted-2);
     margin-inline-start: 3px;
     margin-bottom: 1px;
+    white-space: nowrap;
   }
   
   .track-row {
@@ -717,7 +720,8 @@
     width: 2px;
     transform: translateX(-50%);
     background: #fff;
-    box-shadow: 0 3px 0 1px #131319, 0 2px 0 3px #2b2b39;
+    box-shadow: 0 1px 0 2px #131319, 0 1px 0 3px #2b2b39;
+    border-radius: 5px;
   }
   
   .playhead::before {
@@ -729,8 +733,9 @@
     width: 10px;
     height: 10px;
     border-radius: 2px;
-    z-index: 2;
+    z-index: 3;
     background: linear-gradient(135deg, #16161f 0% 50%, #ffffff 50% 100%);
+    box-shadow: -4px -3px 0px #16161f;
   }
 
   .export-panel {
@@ -834,7 +839,6 @@
     .layout {
       display: flex !important;
       flex-direction: row !important;
-      /* width: 200vw !important; */
       height: calc(100vh - 68px - 60px) !important;
       min-height: auto !important;
       overflow-x: auto !important;
@@ -878,12 +882,8 @@
     /* Bottom Navigation Bar */
     .bottom-nav {
       display: flex;
-      /* position: fixed; */
       bottom: 0;
-      /* left: 0; */
-      /* right: 0; */
       height: 60px;
-      /* background: var(--panel); */
       border: none !important;
       border-top: 1px solid var(--border);
       z-index: 1000;
@@ -983,7 +983,7 @@
           <h3>الخط الزمني</h3>
           <span class="note">اسحب الكتلة لتحريكها</span>
         </div>
-        <div class="timeline-scroll">
+        <div class="timeline-scroll" id="timelineScroll">
           <div class="timeline-inner" id="timelineInner">
             <div class="ruler" id="ruler"></div>
             <div id="tracksWrap"></div>
@@ -1027,7 +1027,7 @@
   const curTimeEl = $('#curTime'), durTimeEl = $('#durTime');
   const scrub = $('#scrub'), scrubFill = $('#scrubFill'), scrubKnob = $('#scrubKnob');
   const masterVol = $('#masterVol'), previewFrame = $('#previewFrame');
-  const ruler = $('#ruler'), tracksWrap = $('#tracksWrap'), timelineInner = $('#timelineInner'), playhead = $('#playhead');
+  const ruler = $('#ruler'), tracksWrap = $('#tracksWrap'), timelineInner = $('#timelineInner'), timelineScroll = $('#timelineScroll'), playhead = $('#playhead');
   const recCanvas = $('#recCanvas'), exportPanel = $('#exportPanel'), exportPreview = $('#exportPreview'), downloadLink = $('#downloadLink');
 
   /* Touch Mode Navigation Handles */
@@ -1044,10 +1044,16 @@
   let audioCtx = null, recordDest = null;
   let rafId = null;
   let isExporting = false;
+  let isDraggingPlayhead = false;
 
   const fmt = t => { 
     t = Math.max(0, t || 0); 
-    const m = Math.floor(t / 60), s = Math.floor(t % 60); 
+    const h = Math.floor(t / 3600);
+    const m = Math.floor((t % 3600) / 60);
+    const s = Math.floor(t % 60); 
+    if (h > 0) {
+      return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
     return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'); 
   };
 
@@ -1115,12 +1121,24 @@
     syncClips(mainVideo.currentTime, !mainVideo.paused);
   };
 
+  function autoScrollToPlayhead(pct) {
+    if (isDraggingPlayhead) return;
+    const scrollWidth = timelineInner.clientWidth;
+    const containerWidth = timelineScroll.clientWidth;
+    const playheadPos = (pct / 100) * scrollWidth;
+    
+    if (playheadPos < timelineScroll.scrollLeft || playheadPos > timelineScroll.scrollLeft + containerWidth - 50) {
+      timelineScroll.scrollLeft = playheadPos - containerWidth / 2;
+    }
+  }
+
   function syncUI(){
     curTimeEl.textContent = fmt(mainVideo.currentTime);
     const pct = mainDuration ? (mainVideo.currentTime / mainDuration) * 100 : 0;
     scrubFill.style.width = pct + '%';
     scrubKnob.style.insetInlineStart = pct + '%';
     playhead.style.left = pct + '%';
+    autoScrollToPlayhead(pct);
   }
 
   function seekTo(clientX, el){
@@ -1161,6 +1179,7 @@
   const handlePlayheadDrag = e => {
     e.preventDefault();
     ensureAudioCtx();
+    isDraggingPlayhead = true;
 
     const onMove = ev => {
       const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
@@ -1168,6 +1187,7 @@
     };
 
     const onEnd = () => {
+      isDraggingPlayhead = false;
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onEnd);
       document.removeEventListener('touchmove', onMove);
@@ -1175,7 +1195,7 @@
     };
 
     document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onEnd);
+    document.addEventListener('mouseup', onUp => onEnd());
     document.addEventListener('touchmove', onMove, {passive: false});
     document.addEventListener('touchend', onEnd);
   };
@@ -1399,8 +1419,10 @@
   }
 
   function parseTimeStr(str, fallback){
-    const m = str.trim().match(/^(\d+):(\d{1,2})$/);
-    if(m) return (+m[1]) * 60 + (+m[2]);
+    const parts = str.trim().split(':').map(Number);
+    if(parts.some(isNaN)) return fallback;
+    if(parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    if(parts.length === 2) return parts[0] * 60 + parts[1];
     const n = parseFloat(str); 
     return isNaN(n) ? fallback : n;
   }
@@ -1413,8 +1435,16 @@
   /* ---------------- Timeline Rendering ---------------- */
   function buildRuler(){
     ruler.innerHTML = '';
+    
+    // إعطاء عرض كاف للـ Timeline لمنع التداخل مع الفيديوهات الطويلة
+    const pxPerSec = Math.max(12, 800 / (mainDuration || 1));
+    const totalWidth = Math.max(timelineScroll.clientWidth, mainDuration * pxPerSec);
+    timelineInner.style.width = totalWidth + 'px';
+
     let step = 5;
-    if(mainDuration > 600) step = 60; 
+    if(mainDuration > 3600) step = 300;
+    else if(mainDuration > 1800) step = 120;
+    else if(mainDuration > 600) step = 60; 
     else if(mainDuration > 180) step = 30; 
     else if(mainDuration > 60) step = 10;
 
@@ -1464,7 +1494,7 @@
 
     const isHandleL = e.target.classList.contains('l');
     const isHandleR = e.target.classList.contains('r');
-    const rowRect = row.getBoundingClientRect();
+    const rowRect = timelineInner.getBoundingClientRect();
     const startX = e.touches ? e.touches[0].clientX : e.clientX;
     const origStart = c.start, origEnd = c.end;
     const secPerPx = mainDuration / rowRect.width;
@@ -1505,7 +1535,7 @@
 
   const handleRulerClick = e => {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    seekTo(clientX, ruler);
+    seekTo(clientX, timelineInner);
   };
 
   ruler.addEventListener('mousedown', handleRulerClick);
