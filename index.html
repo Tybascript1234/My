@@ -206,10 +206,15 @@
     border: 1px solid var(--border);
     border-radius: 11px;
     padding: 12px;
+    width: 49%;
     margin-bottom: 10px;
     cursor: pointer;
     transition: border-color .15s;
-    border-inline-start: 4px solid var(--video);
+  }
+  #clipList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
   }
   
   .clip-card.audio-type, .clip-card.is-hidden {
