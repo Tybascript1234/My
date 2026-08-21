@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>استوديو دمج المقاطع</title>
+<title>استوديو دمج المقاطع المتطور</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
@@ -143,8 +143,12 @@
   }
   
   @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255,77,94,.5); }
-    50% { box-shadow: 0 0 0 8px rgba(255,77,94,0); }
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(255,77,94,.5);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(255,77,94,0);
+    }
   }
 
   /* Layout */
@@ -188,7 +192,6 @@
     color: #3ed8c3;
     height: 24px;
     width: 40px;
-    cursor: pointer;
   }
   
   .clip-card {
@@ -586,6 +589,7 @@
   .timeline-scroll {
     overflow-x: auto;
     overflow-y: hidden;
+    scrollbar-width: thin;
     padding-bottom: 8px;
     position: relative;
     width: 100%;
@@ -615,6 +619,7 @@
     display: flex;
     align-items: flex-end;
     pointer-events: none;
+    padding-inline-start: 0;
   }
   
   .tick::before {
@@ -800,63 +805,6 @@
     margin-top: 8px;
   }
 
-  /* Modal Dialog for Offline Notice */
-  .modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.75);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    direction: rtl;
-  }
-  .modal-overlay.active {
-    display: flex;
-  }
-  .modal-box {
-    background: var(--panel-alt);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    max-width: 440px;
-    width: 90%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    text-align: center;
-  }
-  .modal-box h3 {
-    font-family: 'Cairo', sans-serif;
-    margin-top: 0;
-    color: var(--audio);
-  }
-  .modal-box p {
-    font-size: 13.5px;
-    color: var(--text);
-    line-height: 1.6;
-  }
-  .modal-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  .modal-btn {
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-family: 'Cairo', sans-serif;
-    cursor: pointer;
-  }
-  .modal-btn.primary {
-    background: var(--video);
-    color: #04211d;
-  }
-  .modal-btn.secondary {
-    background: var(--border);
-    color: var(--text);
-  }
-
   .note {
     font-size: 11.5px;
     color: var(--muted-2);
@@ -875,6 +823,75 @@
     border-radius: 6px;
   }
 
+  /* Modal Popup Styles */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 16px;
+  }
+  .modal-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    direction: rtl;
+    text-align: right;
+  }
+  .modal-card h3 {
+    margin: 0 0 10px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px;
+    color: var(--danger);
+  }
+  .modal-card p {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .modal-card .time-info {
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 12.5px;
+    color: var(--audio);
+  }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .modal-btn {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+  }
+  .modal-btn.primary {
+    background: var(--video);
+    color: #04211d;
+  }
+  .modal-btn.secondary {
+    background: var(--panel-alt);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* Bottom Nav (Hidden by Default) */
   .bottom-nav {
     display: none;
   }
@@ -891,38 +908,102 @@
     .export-panel video { width: 100%; }
   }
 
+  /* Touch Mode Layout Adjustments */
   @media (hover: none) and (pointer: coarse) {
     #durTime, .vol, #exportBtnTxt, .time-display a { display: none !important; }
-    header { border: none; }
-    body { overflow-x: hidden; user-select: none; display: flex; flex-direction: column; }
+    
+    header {
+      border: none;
+    }
+
+    body {
+      overflow-x: hidden;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+    }
+
     .layout {
-      display: flex !important; flex-direction: row !important;
-      height: calc(100vh - 68px - 60px) !important; min-height: auto !important;
-      overflow-x: auto !important; overflow-y: hidden !important;
-      scroll-snap-type: x mandatory; scroll-behavior: smooth;
-      padding-bottom: 0 !important; overflow: hidden; scrollbar-width: none; flex: 1 1;
+      display: flex !important;
+      flex-direction: row !important;
+      height: calc(100vh - 68px - 60px) !important;
+      min-height: auto !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      padding-bottom: 0 !important;
+      overflow: hidden;
+      scrollbar-width: none;
+      flex: 1 1;
     }
+
     .sidebar, .stage-area {
-      width: 100vw !important; flex-shrink: 0 !important;
-      scroll-snap-align: start; scroll-snap-stop: always;
-      height: 100% !important; overflow-y: auto !important; box-sizing: border-box;
+      width: 100vw !important;
+      flex-shrink: 0 !important;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      height: 100% !important;
+      overflow-y: auto !important;
+      box-sizing: border-box;
     }
-    .sidebar { order: 2; position: relative !important; top: 0 !important; max-height: 100% !important; border-inline-start: none !important; border-bottom: none !important; background: #0000; }
-    .stage-area { order: 1; }
-    .no-video { height: 36vh; }
+
+    .sidebar {
+      order: 2;
+      position: relative !important;
+      top: 0 !important;
+      max-height: 100% !important;
+      border-inline-start: none !important;
+      border-bottom: none !important;
+      background: #0000;
+    }
+
+    .stage-area {
+      order: 1;
+    }
+
+    .no-video {
+      height: 36vh;
+    }
+
+    /* Bottom Navigation Bar */
     .bottom-nav {
-      display: flex; bottom: 0; height: 60px; border: none !important;
-      border-top: 1px solid var(--border); z-index: 1000;
-      justify-content: space-around; align-items: center; width: 100%;
-      padding: 0 20px; gap: 20px;
+      display: flex;
+      bottom: 0;
+      height: 60px;
+      border: none !important;
+      border-top: 1px solid var(--border);
+      z-index: 1000;
+      justify-content: space-around;
+      align-items: center;
+      width: 100%;
+      padding: 0 20px;
+      gap: 20px;
     }
+
     .bottom-nav button {
-      background: none; border: none; color: var(--muted); flex: 1; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 0 10px #0e0e13 inset; border-radius: 40px; transition: color 0.2s, background 0.2s;
+      background: none;
+      border: none;
+      color: var(--muted);
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 10px #0e0e13 inset;
+      border-radius: 40px;
+      transition: color 0.2s, background 0.2s;
     }
-    .bottom-nav button.active { color: var(--video); background: rgba(62, 216, 195, 0.05); }
-    .bottom-nav button svg { width: 24px; height: 24px; }
+
+    .bottom-nav button.active {
+      color: var(--video);
+      background: rgba(62, 216, 195, 0.05);
+    }
+
+    .bottom-nav button svg {
+      width: 24px;
+      height: 24px;
+    }
   }
 </style>
 </head>
@@ -945,6 +1026,7 @@
 </header>
 
 <div class="layout" id="mainLayout">
+
   <aside class="sidebar" id="sidebarArea">
       <h2>
         <label for="clipInput" class="label"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></label>
@@ -954,6 +1036,7 @@
 
     <div id="clipList"></div>
     <div class="empty-hint" id="emptyHint">لم تُضف أي مقاطع بعد. اختر مقطعًا لإدراجه فوق الفيديو الأساسي في أي لحظة تريدها.</div>
+
     <div class="inspector" id="inspector" style="display:none;"></div>
   </aside>
 
@@ -988,7 +1071,7 @@
       <div class="timeline-card">
         <div class="timeline-head">
           <h3>الخط الزمني</h3>
-          <span class="note">اسحب الكتلة لتحريكها</span>
+          <span class="note">اسحب الكتلة لتحريكه</span>
         </div>
         <div class="timeline-scroll" id="timelineScroll">
           <div class="timeline-inner" id="timelineInner">
@@ -1003,29 +1086,20 @@
         <video id="exportPreview" controls></video>
         <div class="txt">
           <h4>الفيديو النهائي جاهز</h4>
-          <p id="exportNoticeTxt">تم دمج الفيديو بنجاح واكتمل التصدير.</p>
-          <a class="dl-btn" id="downloadLink" download="فيديو-مدمج.mp4">تنزيل الفيديو</a>
+          <p>تم دمج كل المقاطع المرئية والصوتية حسب التوقيت المحدد لكل منها.</p>
+          <a class="dl-btn" id="downloadLink" download="فيديو-مدمج.mp4">تنزيل الفيديو (MP4)</a>
         </div>
       </div>
 
-      <p class="note">ملاحظة: التصدير يتم بسرعة فائق بواسطة Mediabunny داخل المتصفح.</p>
+      <p class="note">ملاحظة: مع مكتبة Mediabunny يتم التصدير والسحب الفائق برمجياً داخل المتصفح بأسرع وقت ممكن.</p>
     </div>
   </main>
 </div>
 
-<!-- Modal Dialog for Offline handling -->
-<div class="modal-overlay" id="offlineModal">
-  <div class="modal-box">
-    <h3>عفواً! لا يوجد اتصال بالإنترنت</h3>
-    <p>يبدو أن الإنترنت مقطوع حالياً، ولا يمكن تحميل مكتبة Tonal/Mediabunny الخارجية أونلاين.</p>
-    <p>هل ترغب في الاستمرار والتنزيل بدقة سريعة أوفلاين مباشرة بدون إنترنت عبر المتصفح؟</p>
-    <div class="modal-actions">
-      <button class="modal-btn primary" id="offlineConfirmBtn">تنزيل بدون إنترنت</button>
-      <button class="modal-btn secondary" id="offlineCancelBtn">إلغاء</button>
-    </div>
-  </div>
-</div>
+<!-- Modal Container for Offline Warning -->
+<div id="modalContainer" style="display: none;"></div>
 
+<!-- Bottom Navigation Bar for Touch Devices -->
 <div class="bottom-nav" id="bottomNav">
   <button id="navStageBtn" class="active" title="منطقة العرض والخط الزمني">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
@@ -1048,12 +1122,9 @@
   const masterVol = $('#masterVol'), previewFrame = $('#previewFrame');
   const ruler = $('#ruler'), tracksWrap = $('#tracksWrap'), timelineInner = $('#timelineInner'), timelineScroll = $('#timelineScroll'), playhead = $('#playhead');
   const recCanvas = $('#recCanvas'), exportPanel = $('#exportPanel'), exportPreview = $('#exportPreview'), downloadLink = $('#downloadLink');
-  const exportNoticeTxt = $('#exportNoticeTxt');
+  const modalContainer = $('#modalContainer');
 
-  const offlineModal = $('#offlineModal');
-  const offlineConfirmBtn = $('#offlineConfirmBtn');
-  const offlineCancelBtn = $('#offlineCancelBtn');
-
+  /* Touch Mode Navigation Handles */
   const mainLayout = $('#mainLayout');
   const stageArea = $('#stageArea');
   const sidebarArea = $('#sidebarArea');
@@ -1067,7 +1138,8 @@
   let audioCtx = null, recordDest = null;
   let rafId = null;
   let isExporting = false;
-  let mainFileRef = null;
+  let isDraggingPlayhead = false;
+  let isMediabunnyLoaded = false;
 
   const fmt = t => { 
     t = Math.max(0, t || 0); 
@@ -1081,24 +1153,24 @@
   };
 
   /* ---------------- Dynamic Mediabunny Loader ---------------- */
-  let isMediabunnyLoaded = false;
-  function loadMediabunnyDynamic() {
-    return new Promise((resolve, reject) => {
-      if (isMediabunnyLoaded || window.Mediabunny) {
-        isMediabunnyLoaded = true;
-        return resolve(true);
-      }
-      if (!navigator.onLine) {
-        return reject(new Error("OFFLINE"));
-      }
+  async function loadMediabunny() {
+    if (isMediabunnyLoaded || window.Mediabunny) {
+      isMediabunnyLoaded = true;
+      return true;
+    }
+    if (!navigator.onLine) {
+      return false;
+    }
+    return new Promise((resolve) => {
       const script = document.createElement('script');
-      script.src = "https://cdn.jsdelivr.net/npm/mediabunny@latest/dist/mediabunny.min.js";
+      // Dynamic import from CDN for Mediabunny
+      script.src = 'https://cdn.jsdelivr.net/npm/mediabunny@latest/dist/mediabunny.umd.js';
       script.onload = () => {
         isMediabunnyLoaded = true;
         resolve(true);
       };
       script.onerror = () => {
-        reject(new Error("FAILED_TO_LOAD"));
+        resolve(false);
       };
       document.head.appendChild(script);
     });
@@ -1106,8 +1178,13 @@
 
   /* ---------------- Touch Navigation Logic ---------------- */
   if (navStageBtn && navSidebarBtn) {
-    navStageBtn.onclick = () => stageArea.scrollIntoView({ behavior: 'smooth' });
-    navSidebarBtn.onclick = () => sidebarArea.scrollIntoView({ behavior: 'smooth' });
+    navStageBtn.onclick = () => {
+      stageArea.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    navSidebarBtn.onclick = () => {
+      sidebarArea.scrollIntoView({ behavior: 'smooth' });
+    };
 
     mainLayout.addEventListener('scroll', () => {
       const scrollLeft = Math.abs(mainLayout.scrollLeft);
@@ -1127,7 +1204,6 @@
   mainInput.onchange = e => {
     const f = e.target.files[0]; 
     if(!f) return;
-    mainFileRef = f;
     mainVideo.src = URL.createObjectURL(f);
     mainVideo.onloadedmetadata = () => {
       mainDuration = mainVideo.duration;
@@ -1220,9 +1296,11 @@
   scrub.addEventListener('mousedown', handleScrubStart);
   scrub.addEventListener('touchstart', handleScrubStart, {passive: false});
 
+  /* ---------------- Playhead Continuous Drag ---------------- */
   const handlePlayheadDrag = e => {
     e.preventDefault();
     ensureAudioCtx();
+    isDraggingPlayhead = true;
 
     const onMove = ev => {
       const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
@@ -1230,6 +1308,7 @@
     };
 
     const onEnd = () => {
+      isDraggingPlayhead = false;
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onEnd);
       document.removeEventListener('touchmove', onMove);
@@ -1247,6 +1326,7 @@
 
   masterVol.oninput = () => mainVideo.volume = masterVol.value;
 
+  /* ---------------- Audio Graph ---------------- */
   function ensureAudioCtx(){
     if(audioCtx) {
       if(audioCtx.state === 'suspended') audioCtx.resume();
@@ -1288,7 +1368,7 @@
     el.setAttribute('webkit-playsinline', 'true');
 
     const clip = {
-      id: idSeq++, name: file.name, type, url: objectUrl, el, fileRef: file,
+      id: idSeq++, name: file.name, type, url: objectUrl, el, file,
       duration: 0, start: 0, end: 0, trimStart: 0,
       hidden: type === 'audio', volume: 1,
       position: 'full', gain: null, overlayEl: null
@@ -1327,7 +1407,9 @@
       processMetadata();
     } else {
       el.onloadedmetadata = processMetadata;
-      el.onerror = () => { alert(`تعذر تحميل الملف: ${file.name}`); };
+      el.onerror = () => {
+        alert(`تعذر تحميل الملف: ${file.name}`);
+      };
     }
   }
 
@@ -1400,6 +1482,7 @@
     return s.replace(/[&<>"]/g, m => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[m])); 
   }
 
+  /* ---------------- Inspector Controls ---------------- */
   function renderInspector(){
     const c = clips.find(x => x.id === selectedId);
     if(!c){ 
@@ -1474,8 +1557,10 @@
     c.end = Math.max(c.start + 0.2, Math.min(c.end, mainDuration));
   }
 
+  /* ---------------- Timeline Rendering ---------------- */
   function buildRuler(){
     ruler.innerHTML = '';
+    
     const pxPerSec = Math.max(12, 800 / (mainDuration || 1));
     const totalWidth = Math.max(timelineScroll.clientWidth, mainDuration * pxPerSec);
     timelineInner.style.width = totalWidth + 'px';
@@ -1511,6 +1596,7 @@
       
       block.style.left = leftPct + '%'; 
       block.style.width = widthPct + '%';
+      
       block.innerHTML = `<span>${escapeHtml(c.name)}</span><div class="handle l"></div><div class="handle r"></div>`;
       
       block.addEventListener('mousedown', e => startDrag(e, c, block, row));
@@ -1522,9 +1608,11 @@
     if(clips.length) playhead.style.height = (clips.length * 44 + 22) + 'px';
   }
 
+  /* ---------------- Drag & Resize Handler ---------------- */
   function startDrag(e, c, block, row){
     e.preventDefault();
     e.stopPropagation();
+    
     selectedId = c.id; 
     
     document.querySelectorAll('.clip-block').forEach(b => b.classList.remove('selectedblock'));
@@ -1601,6 +1689,7 @@
   tracksWrap.addEventListener('mousedown', handleTimelineClick);
   tracksWrap.addEventListener('touchstart', handleTimelineClick);
 
+  /* ---------------- Synchronization ---------------- */
   function syncClips(t, playing){
     clips.forEach(c => {
       const active = t >= c.start && t < c.end;
@@ -1612,6 +1701,7 @@
 
       if(active){
         const innerTime = c.trimStart + (t - c.start);
+        
         if(innerTime >= 0 && innerTime <= c.duration){
           if(Math.abs(mediaEl.currentTime - innerTime) > 0.25) { 
             try { mediaEl.currentTime = innerTime; } catch(e){} 
@@ -1635,155 +1725,202 @@
     });
   }
 
-  /* ---------------- Main Export Trigger Logic ---------------- */
+  /* ---------------- Offline Export Calculation & Modal ---------------- */
+  function showOfflineModal(estSeconds) {
+    return new Promise((resolve) => {
+      const formattedTime = fmt(estSeconds);
+      modalContainer.innerHTML = `
+        <div class="modal-overlay">
+          <div class="modal-card">
+            <h3>لا يوجد اتصال بالإنترنت</h3>
+            <p>مكتبة <b>Mediabunny</b> غير متوفرة حالياً في المتصفح وتتطلب اتصالاً بالإنترنت لتحميلها لأول مرة.</p>
+            <div class="time-info">
+              الوقت المستغرق المقدر للتنزيل بدون إنترنت (عبر التسجيل المباشر): <b>${formattedTime}</b>
+            </div>
+            <div class="modal-actions">
+              <button class="modal-btn secondary" id="modalCancelBtn">إلغاء</button>
+              <button class="modal-btn primary" id="modalProceedBtn">التنزيل بدون إنترنت</button>
+            </div>
+          </div>
+        </div>
+      `;
+      modalContainer.style.display = 'block';
+
+      $('#modalCancelBtn').onclick = () => {
+        modalContainer.style.display = 'none';
+        modalContainer.innerHTML = '';
+        resolve(false);
+      };
+
+      $('#modalProceedBtn').onclick = () => {
+        modalContainer.style.display = 'none';
+        modalContainer.innerHTML = '';
+        resolve(true);
+      };
+    });
+  }
+
+  /* ---------------- Mediabunny Fast Processing Export ---------------- */
+  async function exportWithMediabunny() {
+    try {
+      const { InputFile, OutputFile, MediaEngine } = window.Mediabunny;
+      
+      const mainFile = mainInput.files[0];
+      if (!mainFile) return false;
+
+      const engine = new MediaEngine();
+      const mainSource = new InputFile(mainFile);
+      await engine.addInput(mainSource);
+
+      for (const c of clips) {
+        if (c.file) {
+          const clipSource = new InputFile(c.file);
+          await engine.addInput(clipSource, {
+            start: c.start,
+            end: c.end,
+            volume: c.volume,
+            position: c.position,
+            hidden: c.hidden
+          });
+        }
+      }
+
+      const output = new OutputFile({ format: 'mp4' });
+      const resultBlob = await engine.render(output, (progress) => {
+        exportBtnTxt.textContent = `جارٍ المعالجة السريعة: ${Math.round(progress * 100)}%`;
+      });
+
+      const url = URL.createObjectURL(resultBlob);
+      exportPreview.src = url; 
+      downloadLink.href = url;
+      downloadLink.download = "فيديو-مدمج.mp4";
+      exportPanel.classList.add('show');
+
+      const autoA = document.createElement('a');
+      autoA.href = url;
+      autoA.download = 'فيديو-مدمج.mp4';
+      document.body.appendChild(autoA);
+      autoA.click();
+      document.body.removeChild(autoA);
+
+      return true;
+    } catch(err) {
+      console.warn("Mediabunny error or WebCodecs fallback triggered:", err);
+      return false;
+    }
+  }
+
+  /* ---------------- Fallback Realtime Render (Offline Mode) ---------------- */
+  function exportWithCanvasRecorder() {
+    return new Promise((resolve) => {
+      const vw = mainVideo.videoWidth || 1280, vh = mainVideo.videoHeight || 720;
+      recCanvas.width = vw; 
+      recCanvas.height = vh;
+      const ctx = recCanvas.getContext('2d');
+
+      mainVideo.pause();
+      clips.forEach(c => { 
+        const activeEl = c.overlayEl || c.el;
+        activeEl.pause(); 
+        activeEl.currentTime = c.trimStart; 
+      });
+      mainVideo.currentTime = 0;
+
+      setTimeout(() => {
+        const canvasStream = recCanvas.captureStream(30);
+        const audioTracks = recordDest.stream.getAudioTracks();
+        const combined = new MediaStream([...canvasStream.getVideoTracks(), ...audioTracks]);
+
+        let mime = 'video/webm;codecs=vp9,opus';
+        if(!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm;codecs=vp8,opus';
+        if(!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm';
+        
+        const recorder = new MediaRecorder(combined, {mimeType: mime});
+        const chunks = [];
+        
+        recorder.ondataavailable = e => { if(e.data.size > 0) chunks.push(e.data); };
+        recorder.onstop = () => {
+          const blob = new Blob(chunks, {type: 'video/webm'});
+          const url = URL.createObjectURL(blob);
+          exportPreview.src = url; 
+          downloadLink.href = url;
+          downloadLink.download = "فيديو-مدمج.webm";
+          exportPanel.classList.add('show');
+          cancelAnimationFrame(rafId);
+
+          const autoA = document.createElement('a');
+          autoA.href = url;
+          autoA.download = 'فيديو-مدمج.webm';
+          document.body.appendChild(autoA);
+          autoA.click();
+          document.body.removeChild(autoA);
+          resolve();
+        };
+
+        function drawLoop(){
+          ctx.drawImage(mainVideo, 0, 0, vw, vh);
+          const t = mainVideo.currentTime;
+          clips.forEach(c => {
+            if(c.type !== 'video' || c.hidden || !c.overlayEl) return;
+            if(t >= c.start && t < c.end && c.overlayEl.readyState >= 2){
+              const rect = overlayRectFor(c.position, vw, vh);
+              ctx.drawImage(c.overlayEl, rect.x, rect.y, rect.w, rect.h);
+            }
+          });
+          syncClips(t, true);
+          if(!mainVideo.ended) rafId = requestAnimationFrame(drawLoop);
+        }
+
+        mainVideo.onended = () => { recorder.state === 'recording' && recorder.stop(); };
+        recorder.start();
+        mainVideo.play();
+        drawLoop();
+      }, 150);
+    });
+  }
+
+  /* ---------------- Main Export Trigger ---------------- */
   exportBtn.onclick = async () => {
     if(isExporting || !mainVideo.src) return;
+    ensureAudioCtx();
+    isExporting = true;
+    exportBtn.classList.add('recording'); 
+    exportBtnTxt.textContent = 'جارٍ تجهيز التحميل...';
+    exportPanel.classList.remove('show');
 
-    // حاول تحميل Mediabunny في الدوم الآن فقط عند التنزيل
-    try {
-      exportBtnTxt.textContent = 'جاري التهيئة...';
-      await loadMediabunnyDynamic();
-      runMediabunnyExport();
-    } catch (err) {
-      if (!navigator.onLine || err.message === 'OFFLINE' || err.message === 'FAILED_TO_LOAD') {
-        // إذا تعذر التحميل بسبب عدم وجود إنترنت، اعرض الرسالة التفاعلية
-        exportBtnTxt.textContent = 'تصدير الفيديو النهائي';
-        offlineModal.classList.add('active');
+    // Attempt dynamically loading Mediabunny only on export
+    const loaded = await loadMediabunny();
+
+    if (loaded) {
+      exportBtnTxt.textContent = 'جارٍ معالجة Mediabunny...';
+      const success = await exportWithMediabunny();
+      if (!success) {
+        // Fallback to Canvas Recorder if Mediabunny fails
+        await exportWithCanvasRecorder();
+      }
+    } else {
+      // Offline Mode Handler
+      exportBtn.classList.remove('recording'); 
+      exportBtnTxt.textContent = 'تصدير الفيديو النهائي';
+      
+      const estimatedTime = mainDuration; // Estimation based on video duration
+      const proceed = await showOfflineModal(estimatedTime);
+
+      if (proceed) {
+        isExporting = true;
+        exportBtn.classList.add('recording');
+        exportBtnTxt.textContent = 'جارٍ التصدير المباشر...';
+        await exportWithCanvasRecorder();
       } else {
-        alert("حدث خطأ أثناء تحميل مكتبة Mediabunny.");
+        isExporting = false;
+        return;
       }
     }
-  };
 
-  offlineCancelBtn.onclick = () => {
-    offlineModal.classList.remove('active');
-  };
-
-  offlineConfirmBtn.onclick = () => {
-    offlineModal.classList.remove('active');
-    runOfflineExportFast();
-  };
-
-  /* ---------------- Tonal / Mediabunny Fast Offline/Online Exporter ---------------- */
-  async function runMediabunnyExport() {
-    isExporting = true;
-    const startTime = performance.now();
-    exportBtn.classList.add('recording');
-    exportBtnTxt.textContent = 'جاري التصدير عبر Mediabunny...';
-    exportPanel.classList.remove('show');
-
-    try {
-      const { Input, Output, Conversion, Buffer } = window.Mediabunny;
-
-      // إنشاء المخرجات والمعالجة فائقة السرعة
-      const mainInputFile = new Input({ file: mainFileRef });
-      const output = new Output({ format: 'mp4' });
-
-      // إضافة ملفات الصوت والفيديو المعالجة مع التراكيب والتوقيتات
-      const conversion = new Conversion({
-        inputs: [mainInputFile],
-        output: output
-      });
-
-      await conversion.run((progress) => {
-        const pct = Math.round(progress * 100);
-        exportBtnTxt.textContent = `جاري التصدير: ${pct}%`;
-      });
-
-      const blob = await output.getBlob();
-      const endTime = performance.now();
-      const durationSec = ((endTime - startTime) / 1000).toFixed(2);
-
-      finalizeExport(blob, durationSec, 'Mediabunny (أونلاين)');
-    } catch (err) {
-      console.warn("فشل التصدير عبر Mediabunny، سيتم التحويل أوفلاين:", err);
-      runOfflineExportFast();
-    }
-  }
-
-  /* ---------------- Fast Canvas Offline fallback ---------------- */
-  function runOfflineExportFast() {
-    isExporting = true;
-    const startTime = performance.now();
-    ensureAudioCtx();
-
-    exportBtn.classList.add('recording'); 
-    exportBtnTxt.textContent = 'تصدير أوفلاين...';
-    exportPanel.classList.remove('show');
-
-    const vw = mainVideo.videoWidth || 1280, vh = mainVideo.videoHeight || 720;
-    recCanvas.width = vw; 
-    recCanvas.height = vh;
-    const ctx = recCanvas.getContext('2d');
-
-    mainVideo.pause();
-    clips.forEach(c => { 
-      const activeEl = c.overlayEl || c.el;
-      activeEl.pause(); 
-      activeEl.currentTime = c.trimStart; 
-    });
-    mainVideo.currentTime = 0;
-
-    const canvasStream = recCanvas.captureStream(30);
-    const audioTracks = recordDest.stream.getAudioTracks();
-    const combined = new MediaStream([...canvasStream.getVideoTracks(), ...audioTracks]);
-
-    let mime = 'video/webm;codecs=vp9,opus';
-    if(!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm;codecs=vp8,opus';
-    if(!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm';
-
-    const recorder = new MediaRecorder(combined, {mimeType: mime});
-    const chunks = [];
-    recorder.ondataavailable = e => { if(e.data.size > 0) chunks.push(e.data); };
-    
-    recorder.onstop = () => {
-      const blob = new Blob(chunks, {type: 'video/webm'});
-      const endTime = performance.now();
-      const durationSec = ((endTime - startTime) / 1000).toFixed(2);
-      finalizeExport(blob, durationSec, 'أوفلاين (بدون إنترنت)');
-    };
-
-    function drawLoop(){
-      ctx.drawImage(mainVideo, 0, 0, vw, vh);
-      const t = mainVideo.currentTime;
-      clips.forEach(c => {
-        if(c.type !== 'video' || c.hidden || !c.overlayEl) return;
-        if(t >= c.start && t < c.end && c.overlayEl.readyState >= 2){
-          const rect = overlayRectFor(c.position, vw, vh);
-          ctx.drawImage(c.overlayEl, rect.x, rect.y, rect.w, rect.h);
-        }
-      });
-      syncClips(t, true);
-      if(!mainVideo.ended && isExporting) rafId = requestAnimationFrame(drawLoop);
-    }
-
-    mainVideo.onended = () => { if(recorder.state === 'recording') recorder.stop(); };
-    recorder.start();
-    mainVideo.play();
-    drawLoop();
-  }
-
-  function finalizeExport(blob, timeTakenSec, modeName) {
-    const url = URL.createObjectURL(blob);
-    exportPreview.src = url; 
-    downloadLink.href = url;
-    downloadLink.download = `فيديو-مدمج-${modeName}.mp4`;
-    
-    exportNoticeTxt.innerHTML = `تم التصدير بنجاح عبر <strong>${modeName}</strong>.<br><strong>الوقت المستغرق بالتفصيل:</strong> ${timeTakenSec} ثانية.`;
-    
-    exportPanel.classList.add('show');
     isExporting = false;
     exportBtn.classList.remove('recording'); 
     exportBtnTxt.textContent = 'تصدير الفيديو النهائي';
-    cancelAnimationFrame(rafId);
-
-    const autoA = document.createElement('a');
-    autoA.href = url;
-    autoA.download = `فيديو-مدمج-${modeName}.mp4`;
-    document.body.appendChild(autoA);
-    autoA.click();
-    document.body.removeChild(autoA);
-  }
+  };
 
   function overlayRectFor(pos, vw, vh){
     const w = vw * 0.32, h = vh * 0.32;
