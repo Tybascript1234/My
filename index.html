@@ -221,7 +221,6 @@
     border-radius: 11px;
     padding: 12px;
     width: 49%;
-    /* margin-bottom: 10px; */
     cursor: pointer;
     transition: border-color .15s;
   }
@@ -986,11 +985,6 @@
         المقاطع المُضافة
         <input type="file" id="clipInput" accept="video/*,audio/*" multiple="">
       </h2>
-    <!-- <label class="add-clip-btn" for="">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
-      إضافة مقطع فيديو أو صوت
-      
-    </label> -->
 
     <div id="clipList"></div>
     <div class="empty-hint" id="emptyHint">لم تُضف أي مقاطع بعد. اختر مقطعًا لإدراجه فوق الفيديو الأساسي في أي لحظة تريدها.</div>
@@ -1029,7 +1023,7 @@
       <div class="timeline-card">
         <div class="timeline-head">
           <h3>الخط الزمني</h3>
-          <span class="note">ااسحب الكتلة لتحريكه</span>
+          <span class="note">اسحب الكتلة لتحريكه</span>
         </div>
         <div class="timeline-scroll" id="timelineScroll">
           <div class="timeline-inner" id="timelineInner">
@@ -1049,7 +1043,7 @@
         </div>
       </div>
 
-      <p class="note">ملاحظة: التصدير يتم بالكامل داخل المتصفح عبر تسجيل المعاينة المباشرة.</p>
+      <p class="note">ملاحظة: المعالجة تتم أوفلاين بسرعة عالية وبجودة فائقة داخل المتصفح.</p>
     </div>
   </main>
 </div>
@@ -1090,7 +1084,6 @@
   let mainDuration = 0;
   let idSeq = 1;
   let audioCtx = null, recordDest = null;
-  let rafId = null;
   let isExporting = false;
   let isDraggingPlayhead = false;
 
@@ -1563,13 +1556,10 @@
       const dx = deltaX * secPerPx;
       
       if(isHandleL){
-        // تكبير/تصغير وتمديد المقطع من الجهة اليسرى
         c.start = Math.max(0, Math.min(origStart + dx, origEnd - 0.3));
       } else if(isHandleR){
-        // تكبير/تصغير وتمديد المقطع من الجهة اليمنى
         c.end = Math.min(mainDuration, Math.max(origEnd + dx, origStart + 0.3));
       } else {
-        // تحريك المقطع بالكامل عبر السحب
         const dur = origEnd - origStart;
         let ns = origStart + dx;
         ns = Math.max(0, Math.min(ns, mainDuration - dur));
@@ -1577,13 +1567,11 @@
         c.end = ns + dur;
       }
 
-      // تحديث مظهر المقطع وتزامنه مع شريط الثواني والشريط الزمني
       const leftPct = (c.start / mainDuration) * 100;
       const widthPct = ((c.end - c.start) / mainDuration) * 100;
       block.style.left = leftPct + '%'; 
       block.style.width = widthPct + '%';
       
-      // التمرير التلقائي للاستجابة للسحب
       const blockPixelLeft = (leftPct / 100) * rowRect.width;
       if (isHandleL) {
         timelineScroll.scrollLeft = blockPixelLeft - 20;
@@ -1659,41 +1647,96 @@
     });
   }
 
-  /* ---------------- Video Export ---------------- */
+  /* ---------------- Fast Offline Video Export ---------------- */
   exportBtn.onclick = async () => {
     if(isExporting || !mainVideo.src) return;
-    ensureAudioCtx();
+    
     isExporting = true;
     exportBtn.classList.add('recording'); 
-    exportBtnTxt.textContent = 'جارٍ التصدير...';
+    exportBtnTxt.textContent = 'جارٍ التصدير والسحب السريع...';
     exportPanel.classList.remove('show');
 
-    const vw = mainVideo.videoWidth || 1280, vh = mainVideo.videoHeight || 720;
+    // إيقاف المعاينة الحالية
+    mainVideo.pause();
+    clips.forEach(c => { (c.overlayEl || c.el).pause(); });
+
+    const vw = mainVideo.videoWidth || 1280;
+    const vh = mainVideo.videoHeight || 720;
     recCanvas.width = vw; 
     recCanvas.height = vh;
     const ctx = recCanvas.getContext('2d');
 
-    mainVideo.pause();
-    clips.forEach(c => { 
-      const activeEl = c.overlayEl || c.el;
-      activeEl.pause(); 
-      activeEl.currentTime = c.trimStart; 
-    });
-    mainVideo.currentTime = 0;
-    await new Promise(r => setTimeout(r, 150));
+    // إعداد المسار الصوتي أوفلاين لجميع المقاطع
+    const sampleRate = 44100;
+    const offlineAudioCtx = new OfflineAudioContext(2, Math.ceil(sampleRate * mainDuration), sampleRate);
+    
+    // دالة جلب وقراءة بيانات الصوت أوفلاين
+    async function fetchAudioBuffer(url) {
+      try {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        return await offlineAudioCtx.decodeAudioData(arrayBuffer);
+      } catch(e) { return null; }
+    }
 
-    const canvasStream = recCanvas.captureStream(30);
-    const audioTracks = recordDest.stream.getAudioTracks();
-    const combined = new MediaStream([...canvasStream.getVideoTracks(), ...audioTracks]);
+    // دمج صوت الفيديو الأساسي
+    const mainAudioBuf = await fetchAudioBuffer(mainVideo.src);
+    if(mainAudioBuf) {
+      const src = offlineAudioCtx.createBufferSource();
+      src.buffer = mainAudioBuf;
+      const gain = offlineAudioCtx.createGain();
+      gain.gain.value = masterVol.value;
+      src.connect(gain);
+      gain.connect(offlineAudioCtx.destination);
+      src.start(0);
+    }
+
+    // دمج أصوات المقاطع المضافة
+    for (const c of clips) {
+      const buf = await fetchAudioBuffer(c.url);
+      if(buf) {
+        const src = offlineAudioCtx.createBufferSource();
+        src.buffer = buf;
+        const gain = offlineAudioCtx.createGain();
+        gain.gain.value = c.volume;
+        src.connect(gain);
+        gain.connect(offlineAudioCtx.destination);
+        
+        const playDuration = c.end - c.start;
+        src.start(c.start, c.trimStart, playDuration);
+      }
+    }
+
+    // توليد بافر الصوت النهائي أوفلاين
+    const renderedAudioBuffer = await offlineAudioCtx.startRendering();
+    
+    // تحويل البافر الصوتي لـ MediaStreamDestination
+    const tempAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioSource = tempAudioCtx.createBufferSource();
+    audioSource.buffer = renderedAudioBuffer;
+    const audioDst = tempAudioCtx.createMediaStreamDestination();
+    audioSource.connect(audioDst);
+    audioSource.start(0);
+
+    // إعداد مسار تسجيل الكانفاس والصوت
+    const fps = 30;
+    const frameDuration = 1 / fps;
+    const canvasStream = recCanvas.captureStream(fps);
+    const combinedStream = new MediaStream([
+      ...canvasStream.getVideoTracks(),
+      ...audioDst.stream.getAudioTracks()
+    ]);
 
     let mime = 'video/webm;codecs=vp9,opus';
     if(!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm;codecs=vp8,opus';
     if(!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm';
-    const recorder = new MediaRecorder(combined, {mimeType: mime});
+
+    const recorder = new MediaRecorder(combinedStream, { mimeType: mime });
     const chunks = [];
     recorder.ondataavailable = e => { if(e.data.size > 0) chunks.push(e.data); };
+    
     recorder.onstop = () => {
-      const blob = new Blob(chunks, {type: 'video/webm'});
+      const blob = new Blob(chunks, { type: 'video/webm' });
       const url = URL.createObjectURL(blob);
       exportPreview.src = url; 
       downloadLink.href = url;
@@ -1701,7 +1744,7 @@
       isExporting = false;
       exportBtn.classList.remove('recording'); 
       exportBtnTxt.textContent = 'تصدير الفيديو النهائي';
-      cancelAnimationFrame(rafId);
+      tempAudioCtx.close();
 
       const autoA = document.createElement('a');
       autoA.href = url;
@@ -1711,24 +1754,51 @@
       document.body.removeChild(autoA);
     };
 
-    function drawLoop(){
-      ctx.drawImage(mainVideo, 0, 0, vw, vh);
-      const t = mainVideo.currentTime;
-      clips.forEach(c => {
-        if(c.type !== 'video' || c.hidden || !c.overlayEl) return;
-        if(t >= c.start && t < c.end && c.overlayEl.readyState >= 2){
-          const rect = overlayRectFor(c.position, vw, vh);
-          ctx.drawImage(c.overlayEl, rect.x, rect.y, rect.w, rect.h);
-        }
+    recorder.start();
+
+    // معالجة كل إطار إطار بسرعة شاشة بدون انتظار التزامن الواقعي
+    let currentTime = 0;
+    
+    while (currentTime <= mainDuration) {
+      mainVideo.currentTime = currentTime;
+      
+      await new Promise(resolve => {
+        const onSeeked = () => {
+          mainVideo.removeEventListener('seeked', onSeeked);
+          resolve();
+        };
+        mainVideo.addEventListener('seeked', onSeeked);
       });
-      syncClips(t, true);
-      if(!mainVideo.ended) rafId = requestAnimationFrame(drawLoop);
+
+      ctx.drawImage(mainVideo, 0, 0, vw, vh);
+
+      for (const c of clips) {
+        if (c.type === 'video' && !c.hidden && c.overlayEl) {
+          if (currentTime >= c.start && currentTime < c.end) {
+            c.overlayEl.currentTime = c.trimStart + (currentTime - c.start);
+            await new Promise(res => {
+              const onClipSeeked = () => {
+                c.overlayEl.removeEventListener('seeked', onClipSeeked);
+                res();
+              };
+              c.overlayEl.addEventListener('seeked', onClipSeeked);
+            });
+            
+            if (c.overlayEl.readyState >= 2) {
+              const rect = overlayRectFor(c.position, vw, vh);
+              ctx.drawImage(c.overlayEl, rect.x, rect.y, rect.w, rect.h);
+            }
+          }
+        }
+      }
+
+      const progress = Math.round((currentTime / mainDuration) * 100);
+      exportBtnTxt.textContent = `جارٍ التصدير (${progress}%)...`;
+
+      currentTime += frameDuration;
     }
 
-    mainVideo.onended = () => { recorder.state === 'recording' && recorder.stop(); };
-    recorder.start();
-    mainVideo.play();
-    drawLoop();
+    recorder.stop();
   };
 
   function overlayRectFor(pos, vw, vh){
