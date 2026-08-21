@@ -840,128 +840,6 @@
     display: none;
   }
 
-  /* Export Choice / Network Notice Modals */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(6,6,10,.72);
-    backdrop-filter: blur(3px);
-    z-index: 500;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-
-  .modal-overlay.show {
-    display: flex;
-  }
-
-  .modal-box {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 22px;
-    width: 100%;
-    max-width: 420px;
-    direction: rtl;
-    box-shadow: 0 30px 60px -20px rgba(0,0,0,.6);
-  }
-
-  .modal-box h3 {
-    font-family: 'Cairo', sans-serif;
-    font-size: 16px;
-    margin: 0 0 6px;
-  }
-
-  .modal-box > p {
-    font-size: 12.5px;
-    color: var(--muted);
-    line-height: 1.8;
-    margin: 0 0 16px;
-  }
-
-  .choice-btn {
-    width: 100%;
-    text-align: right;
-    background: var(--panel-alt);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    transition: border-color .15s, background .15s;
-  }
-
-  .choice-btn:hover {
-    border-color: var(--video);
-    background: var(--video-dim);
-  }
-
-  .choice-btn strong {
-    font-family: 'Cairo', sans-serif;
-    font-size: 14px;
-  }
-
-  .choice-btn span {
-    font-size: 11.5px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  .choice-btn .est-time {
-    font-size: 11px;
-    color: var(--video);
-    font-family: 'JetBrains Mono', monospace;
-    direction: ltr;
-    unicode-bidi: isolate;
-    text-align: right;
-  }
-
-  .choice-cancel {
-    width: 100%;
-    background: none;
-    border: none;
-    color: var(--muted);
-    padding: 10px;
-    font-size: 12.5px;
-    margin-top: 4px;
-  }
-
-  .choice-cancel:hover {
-    color: var(--text);
-  }
-
-  .ff-progress-wrap {
-    margin-top: 12px;
-    background: var(--panel-alt);
-    border-radius: 10px;
-    padding: 12px 14px;
-    border: 1px solid var(--border);
-  }
-
-  .ff-progress-bar {
-    height: 8px;
-    border-radius: 6px;
-    background: #2c2c3a;
-    overflow: hidden;
-    margin-top: 8px;
-  }
-
-  .ff-progress-fill {
-    height: 100%;
-    width: 0%;
-    background: var(--video);
-    transition: width .2s;
-  }
-
-  .ff-progress-label {
-    font-size: 12px;
-    color: var(--muted);
-  }
-
   #tracksWrap {
     background: #131319;
     border-radius: 6px;
@@ -1176,54 +1054,6 @@
   </main>
 </div>
 
-<!-- Export Method Choice Modal -->
-<div class="modal-overlay" id="exportChoiceOverlay">
-  <div class="modal-box">
-    <h3>اختر طريقة التصدير</h3>
-    <p>الفيديوهات الطويلة (مثل الفيديو الذي مدته ساعة) تُصدَّر بشكل أفضل وأسرع عبر FFmpeg.</p>
-    <button class="choice-btn" id="chooseFFmpeg">
-      <strong>تصدير بجودة عالية (FFmpeg) — MP4</strong>
-      <span>الأنسب للفيديوهات الطويلة. يحتاج اتصالاً بالإنترنت أول مرة فقط لتحميل المكتبة (~30 م.ب)، ثم تتم المعالجة بالكامل داخل جهازك.</span>
-    </button>
-    <button class="choice-btn" id="chooseOffline">
-      <strong>تصدير بدون إنترنت — WEBM</strong>
-      <span>يعمل فورًا بلا تحميل أي شيء، مناسب للمقاطع القصيرة نسبيًا.</span>
-      <span class="est-time" id="offlineEstTime"></span>
-    </button>
-    <button class="choice-cancel" id="cancelExportChoice">إلغاء</button>
-  </div>
-</div>
-
-<!-- No Internet Notice Modal -->
-<div class="modal-overlay" id="netNoticeOverlay">
-  <div class="modal-box">
-    <h3>تعذّر الاتصال بالإنترنت</h3>
-    <p>تحتاج ميزة التصدير عالي الجودة (FFmpeg) إلى تحميل المكتبة من الإنترنت في أول استخدام فقط، ويبدو أنه لا يوجد اتصال متاح الآن.</p>
-    <button class="choice-btn" id="netNoticeRetryBtn">
-      <strong>إعادة المحاولة</strong>
-      <span>جرّب مجددًا إن كان الاتصال قد عاد للتو.</span>
-    </button>
-    <button class="choice-btn" id="netNoticeOfflineBtn">
-      <strong>التنزيل بدون إنترنت بدلاً من ذلك</strong>
-      <span>يعمل داخل المتصفح فورًا دون الحاجة لأي اتصال.</span>
-      <span class="est-time" id="netNoticeEstTime"></span>
-    </button>
-    <button class="choice-cancel" id="netNoticeCancelBtn">إلغاء</button>
-  </div>
-</div>
-
-<!-- FFmpeg Progress Modal -->
-<div class="modal-overlay" id="ffProgressOverlay">
-  <div class="modal-box">
-    <h3 id="ffProgressTitle">جارٍ التحضير...</h3>
-    <p id="ffProgressDesc">يرجى إبقاء هذه الصفحة مفتوحة حتى انتهاء المعالجة.</p>
-    <div class="ff-progress-wrap">
-      <div class="ff-progress-label" id="ffProgressLabel">0%</div>
-      <div class="ff-progress-bar"><div class="ff-progress-fill" id="ffProgressFill"></div></div>
-    </div>
-  </div>
-</div>
-
 <!-- Bottom Navigation Bar for Touch Devices -->
 <div class="bottom-nav" id="bottomNav">
   <button id="navStageBtn" class="active" title="منطقة العرض والخط الزمني">
@@ -1247,10 +1077,6 @@
   const masterVol = $('#masterVol'), previewFrame = $('#previewFrame');
   const ruler = $('#ruler'), tracksWrap = $('#tracksWrap'), timelineInner = $('#timelineInner'), timelineScroll = $('#timelineScroll'), playhead = $('#playhead');
   const recCanvas = $('#recCanvas'), exportPanel = $('#exportPanel'), exportPreview = $('#exportPreview'), downloadLink = $('#downloadLink');
-  const exportPanelTitle = $('#exportPanel h4'), exportPanelDesc = $('#exportPanel p');
-  const exportChoiceOverlay = $('#exportChoiceOverlay'), chooseFFmpeg = $('#chooseFFmpeg'), chooseOffline = $('#chooseOffline'), cancelExportChoice = $('#cancelExportChoice'), offlineEstTime = $('#offlineEstTime');
-  const netNoticeOverlay = $('#netNoticeOverlay'), netNoticeRetryBtn = $('#netNoticeRetryBtn'), netNoticeOfflineBtn = $('#netNoticeOfflineBtn'), netNoticeCancelBtn = $('#netNoticeCancelBtn'), netNoticeEstTime = $('#netNoticeEstTime');
-  const ffProgressOverlay = $('#ffProgressOverlay'), ffProgressTitle = $('#ffProgressTitle'), ffProgressDesc = $('#ffProgressDesc'), ffProgressLabel = $('#ffProgressLabel'), ffProgressFill = $('#ffProgressFill');
 
   /* Touch Mode Navigation Handles */
   const mainLayout = $('#mainLayout');
@@ -1267,10 +1093,6 @@
   let rafId = null;
   let isExporting = false;
   let isDraggingPlayhead = false;
-  let mainFile = null;
-  let ffmpegInstance = null;
-  let ffmpegLoaded = false;
-  let ffCancelled = false;
 
   const fmt = t => { 
     t = Math.max(0, t || 0); 
@@ -1311,7 +1133,6 @@
   mainInput.onchange = e => {
     const f = e.target.files[0]; 
     if(!f) return;
-    mainFile = f;
     mainVideo.src = URL.createObjectURL(f);
     mainVideo.onloadedmetadata = () => {
       mainDuration = mainVideo.duration;
@@ -1476,7 +1297,7 @@
     el.setAttribute('webkit-playsinline', 'true');
 
     const clip = {
-      id: idSeq++, name: file.name, type, url: objectUrl, el, file,
+      id: idSeq++, name: file.name, type, url: objectUrl, el,
       duration: 0, start: 0, end: 0, trimStart: 0,
       hidden: type === 'audio', volume: 1,
       position: 'full', gain: null, overlayEl: null
@@ -1838,34 +1659,8 @@
     });
   }
 
-  /* ---------------- Video Export: Entry Point (choice modal) ---------------- */
-  exportBtn.onclick = () => {
-    if(isExporting || !mainVideo.src) return;
-    offlineEstTime.textContent = '⏱ الوقت التقريبي للمعالجة: ' + fmt(mainDuration) + ' (يعمل بسرعة التشغيل الفعلية)';
-    exportChoiceOverlay.classList.add('show');
-  };
-
-  cancelExportChoice.onclick = () => exportChoiceOverlay.classList.remove('show');
-  chooseOffline.onclick = () => { exportChoiceOverlay.classList.remove('show'); exportOffline(); };
-  chooseFFmpeg.onclick = () => { exportChoiceOverlay.classList.remove('show'); startFFmpegExport(); };
-
-  netNoticeCancelBtn.onclick = () => netNoticeOverlay.classList.remove('show');
-  netNoticeOfflineBtn.onclick = () => { netNoticeOverlay.classList.remove('show'); exportOffline(); };
-  netNoticeRetryBtn.onclick = () => { netNoticeOverlay.classList.remove('show'); startFFmpegExport(); };
-
-  function overlayRectFor(pos, vw, vh){
-    const w = vw * 0.32, h = vh * 0.32;
-    switch(pos){
-      case 'tl': return {x: vw * 0.04, y: vh * 0.04, w, h};
-      case 'tr': return {x: vw * 0.64, y: vh * 0.04, w, h};
-      case 'bl': return {x: vw * 0.04, y: vh * 0.64, w, h};
-      case 'br': return {x: vw * 0.64, y: vh * 0.64, w, h};
-      default: return {x: 0, y: 0, w: vw, h: vh};
-    }
-  }
-
-  /* ---------------- Export Method 1: Offline (built-in MediaRecorder, no internet needed) ---------------- */
-  async function exportOffline(){
+  /* ---------------- Video Export ---------------- */
+  exportBtn.onclick = async () => {
     if(isExporting || !mainVideo.src) return;
     ensureAudioCtx();
     isExporting = true;
@@ -1902,10 +1697,6 @@
       const url = URL.createObjectURL(blob);
       exportPreview.src = url; 
       downloadLink.href = url;
-      downloadLink.setAttribute('download', 'فيديو-مدمج.webm');
-      downloadLink.textContent = 'تنزيل الفيديو (WEBM)';
-      exportPanelTitle.textContent = 'الفيديو النهائي جاهز';
-      exportPanelDesc.textContent = 'تم دمج كل المقاطع المرئية والصوتية حسب التوقيت المحدد لكل منها (تصدير بدون إنترنت).';
       exportPanel.classList.add('show');
       isExporting = false;
       exportBtn.classList.remove('recording'); 
@@ -1938,214 +1729,16 @@
     recorder.start();
     mainVideo.play();
     drawLoop();
-  }
+  };
 
-  /* ---------------- Export Method 2: FFmpeg.wasm (better for long videos) ---------------- */
-  const FFMPEG_LIB_URL = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js';
-  const FFMPEG_UTIL_URL = 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js';
-  const FFMPEG_CORE_BASE = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
-
-  function loadScriptOnce(src){
-    return new Promise((resolve, reject) => {
-      if(document.querySelector(`script[data-ff-src="${src}"]`)){ resolve(); return; }
-      const s = document.createElement('script');
-      s.src = src;
-      s.dataset.ffSrc = src;
-      s.onload = () => resolve();
-      s.onerror = () => reject(new Error('تعذر تحميل المكتبة من الإنترنت: ' + src));
-      document.head.appendChild(s);
-    });
-  }
-
-  async function checkInternet(){
-    if(!navigator.onLine) return false;
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 4000);
-      await fetch('https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/package.json', {
-        method: 'HEAD', mode: 'no-cors', cache: 'no-store', signal: controller.signal
-      });
-      clearTimeout(timer);
-      return true;
-    } catch(e){
-      return false;
-    }
-  }
-
-  function showFFProgress(title, desc){
-    ffProgressTitle.textContent = title;
-    ffProgressDesc.textContent = desc || '';
-    ffProgressLabel.textContent = '0%';
-    ffProgressFill.style.width = '0%';
-    ffProgressOverlay.classList.add('show');
-  }
-
-  function setFFProgress(pct, label){
-    ffProgressFill.style.width = Math.min(100, Math.max(0, pct)) + '%';
-    ffProgressLabel.textContent = label || (Math.round(pct) + '%');
-  }
-
-  function hideFFProgress(){
-    ffProgressOverlay.classList.remove('show');
-  }
-
-  async function ensureFFmpegLoaded(onProgress){
-    if(ffmpegLoaded && ffmpegInstance) return ffmpegInstance;
-    await loadScriptOnce(FFMPEG_LIB_URL);
-    await loadScriptOnce(FFMPEG_UTIL_URL);
-    const { FFmpeg } = window.FFmpegWASM;
-    const { toBlobURL } = window.FFmpegUtil;
-    const ffmpeg = new FFmpeg();
-    ffmpeg.on('progress', ({progress}) => { if(onProgress) onProgress(progress); });
-    await ffmpeg.load({
-      coreURL: await toBlobURL(`${FFMPEG_CORE_BASE}/ffmpeg-core.js`, 'text/javascript'),
-      wasmURL: await toBlobURL(`${FFMPEG_CORE_BASE}/ffmpeg-core.wasm`, 'application/wasm'),
-    });
-    ffmpegInstance = ffmpeg;
-    ffmpegLoaded = true;
-    return ffmpeg;
-  }
-
-  function evenRound(n){ return Math.max(2, Math.round(n / 2) * 2); }
-
-  function ffOverlayRect(pos){
-    const vw = mainVideo.videoWidth || 1280, vh = mainVideo.videoHeight || 720;
-    const r = overlayRectFor(pos, vw, vh);
-    return { x: evenRound(r.x), y: evenRound(r.y), w: evenRound(r.w), h: evenRound(r.h) };
-  }
-
-  async function startFFmpegExport(){
-    if(isExporting || !mainVideo.src) return;
-
-    // Only touch the network / DOM script tags now, at download time — not before.
-    showFFProgress('جارٍ التحقق من الاتصال بالإنترنت...', 'مكتبة FFmpeg تُحمَّل من الإنترنت فقط عند أول عملية تصدير.');
-    const online = ffmpegLoaded ? true : await checkInternet();
-    hideFFProgress();
-
-    if(!online){
-      netNoticeEstTime.textContent = '⏱ الوقت التقريبي للتصدير بدون إنترنت: ' + fmt(mainDuration);
-      netNoticeOverlay.classList.add('show');
-      return;
-    }
-
-    isExporting = true;
-    ffCancelled = false;
-    exportBtn.classList.add('recording');
-    exportBtnTxt.textContent = 'جارٍ التصدير...';
-    exportPanel.classList.remove('show');
-
-    try {
-      showFFProgress('جارٍ تحميل مكتبة FFmpeg...', 'يحدث هذا مرة واحدة فقط، وقد يستغرق دقيقة حسب سرعة الإنترنت.');
-      const ffmpeg = await ensureFFmpegLoaded(progress => {
-        setFFProgress(progress * 100);
-      });
-
-      showFFProgress('جارٍ تجهيز الملفات...', 'يتم كتابة الفيديو الأساسي والمقاطع داخل الذاكرة المؤقتة للمعالج.');
-      const { fetchFile } = window.FFmpegUtil;
-
-      await ffmpeg.writeFile('main_input', await fetchFile(mainFile));
-
-      const visibleClips = clips.filter(c => c.end > c.start && c.file);
-      const inputArgs = ['-i', 'main_input'];
-      const filterParts = [];
-      const aInputs = ['[0:a]'];
-      let lastV = '0:v';
-      let clipIdx = 0;
-
-      for(const c of visibleClips){
-        clipIdx++;
-        const inFname = 'clip' + clipIdx + '_input';
-        await ffmpeg.writeFile(inFname, await fetchFile(c.file));
-        inputArgs.push('-i', inFname);
-
-        const dur = Math.max(0.05, c.end - c.start).toFixed(3);
-        const trimS = Math.max(0, c.trimStart).toFixed(3);
-        const startT = c.start.toFixed(3);
-        const endT = c.end.toFixed(3);
-
-        if(c.type === 'video' && !c.hidden){
-          const rect = ffOverlayRect(c.position);
-          filterParts.push(`[${clipIdx}:v]trim=start=${trimS}:duration=${dur},setpts=PTS-STARTPTS+${startT}/TB,scale=${rect.w}:${rect.h}[v${clipIdx}]`);
-          filterParts.push(`[${lastV}][v${clipIdx}]overlay=${rect.x}:${rect.y}:enable='between(t,${startT},${endT})'[vo${clipIdx}]`);
-          lastV = `vo${clipIdx}`;
-        }
-
-        if(c.volume > 0){
-          const delayMs = Math.round(c.start * 1000);
-          filterParts.push(`[${clipIdx}:a]atrim=start=${trimS}:duration=${dur},asetpts=PTS-STARTPTS,adelay=${delayMs}:all=1,volume=${c.volume.toFixed(2)}[a${clipIdx}]`);
-          aInputs.push(`[a${clipIdx}]`);
-        }
-      }
-
-      let mapVArg, mapAArg;
-      if(lastV === '0:v'){
-        mapVArg = '0:v';
-      } else {
-        mapVArg = `[${lastV}]`;
-      }
-
-      if(aInputs.length <= 1){
-        mapAArg = '0:a';
-      } else {
-        filterParts.push(`${aInputs.join('')}amix=inputs=${aInputs.length}:duration=first:dropout_transition=0:normalize=0[outa]`);
-        mapAArg = '[outa]';
-      }
-
-      const args = [...inputArgs];
-      if(filterParts.length){
-        args.push('-filter_complex', filterParts.join(';'));
-      }
-      args.push(
-        '-map', mapVArg,
-        '-map', mapAArg,
-        '-t', mainDuration.toFixed(3),
-        '-c:v', 'libx264',
-        '-preset', 'veryfast',
-        '-crf', '23',
-        '-pix_fmt', 'yuv420p',
-        '-c:a', 'aac',
-        '-b:a', '192k',
-        '-movflags', '+faststart',
-        'output.mp4'
-      );
-
-      showFFProgress('جارٍ دمج المقاطع ومعالجة الفيديو...', 'قد تستغرق هذه الخطوة عدة دقائق للفيديوهات الطويلة. لا تُغلق الصفحة.');
-      await ffmpeg.exec(args);
-
-      const data = await ffmpeg.readFile('output.mp4');
-      const blob = new Blob([data.buffer], {type: 'video/mp4'});
-      const url = URL.createObjectURL(blob);
-
-      exportPreview.src = url;
-      downloadLink.href = url;
-      downloadLink.setAttribute('download', 'فيديو-مدمج.mp4');
-      downloadLink.textContent = 'تنزيل الفيديو (MP4)';
-      exportPanelTitle.textContent = 'الفيديو النهائي جاهز (جودة عالية)';
-      exportPanelDesc.textContent = 'تم دمج كل المقاطع المرئية والصوتية عبر FFmpeg بجودة أعلى وأداء أفضل للفيديوهات الطويلة.';
-      exportPanel.classList.add('show');
-
-      const autoA = document.createElement('a');
-      autoA.href = url;
-      autoA.download = 'فيديو-مدمج.mp4';
-      document.body.appendChild(autoA);
-      autoA.click();
-      document.body.removeChild(autoA);
-
-      // clean up virtual FS
-      try {
-        await ffmpeg.deleteFile('main_input');
-        for(let i = 1; i <= clipIdx; i++) await ffmpeg.deleteFile('clip' + i + '_input');
-        await ffmpeg.deleteFile('output.mp4');
-      } catch(e){}
-
-    } catch(err){
-      console.error(err);
-      alert('حدث خطأ أثناء التصدير عبر FFmpeg: ' + (err && err.message ? err.message : err) + '\nيمكنك تجربة التصدير بدون إنترنت بدلاً من ذلك.');
-    } finally {
-      hideFFProgress();
-      isExporting = false;
-      exportBtn.classList.remove('recording');
-      exportBtnTxt.textContent = 'تصدير الفيديو النهائي';
+  function overlayRectFor(pos, vw, vh){
+    const w = vw * 0.32, h = vh * 0.32;
+    switch(pos){
+      case 'tl': return {x: vw * 0.04, y: vh * 0.04, w, h};
+      case 'tr': return {x: vw * 0.64, y: vh * 0.04, w, h};
+      case 'bl': return {x: vw * 0.04, y: vh * 0.64, w, h};
+      case 'br': return {x: vw * 0.64, y: vh * 0.64, w, h};
+      default: return {x: 0, y: 0, w: vw, h: vh};
     }
   }
 
