@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>استوديو دمج المقاطع</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 <style>
@@ -142,12 +143,8 @@
   }
   
   @keyframes pulse {
-    0%, 100% {
-      box-shadow: 0 0 0 0 rgba(255,77,94,.5);
-    }
-    50% {
-      box-shadow: 0 0 0 8px rgba(255,77,94,0);
-    }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,77,94,.5); }
+    50% { box-shadow: 0 0 0 8px rgba(255,77,94,0); }
   }
 
   /* Layout */
@@ -191,28 +188,7 @@
     color: #3ed8c3;
     height: 24px;
     width: 40px;
-  }
-  
-  .add-clip-btn {
-    width: 100%;
-    border: 1.5px dashed var(--border);
-    background: var(--panel-alt);
-    border-radius: 12px;
-    padding: 16px;
-    color: var(--muted);
-    font-size: 13.5px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    transition: all .15s;
-    margin-bottom: 20px;
-  }
-  
-  .add-clip-btn:hover {
-    border-color: var(--video);
-    color: var(--video);
-    background: var(--video-dim);
+    cursor: pointer;
   }
   
   .clip-card {
@@ -221,7 +197,6 @@
     border-radius: 11px;
     padding: 12px;
     width: 49%;
-    /* margin-bottom: 10px; */
     cursor: pointer;
     transition: border-color .15s;
   }
@@ -611,7 +586,6 @@
   .timeline-scroll {
     overflow-x: auto;
     overflow-y: hidden;
-    scrollbar-width: thin;
     padding-bottom: 8px;
     position: relative;
     width: 100%;
@@ -641,7 +615,6 @@
     display: flex;
     align-items: flex-end;
     pointer-events: none;
-    padding-inline-start: 0;
   }
   
   .tick::before {
@@ -827,124 +800,61 @@
     margin-top: 8px;
   }
 
-  /* FFmpeg export controls */
-  .export-controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .export-btn-offline {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: none;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-weight: 600;
-    font-size: 12.5px;
-    font-family: 'Cairo', sans-serif;
-    transition: all .15s;
-    white-space: nowrap;
-  }
-
-  .export-btn-offline:hover {
-    border-color: var(--audio);
-    color: var(--audio);
-    background: var(--audio-dim);
-  }
-
-  .export-btn-offline:disabled {
-    opacity: .4;
-    cursor: not-allowed;
-  }
-
-  .ffmpeg-panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px 18px;
+  /* Modal Dialog for Offline Notice */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.75);
     display: none;
-    flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
     direction: rtl;
   }
-
-  .ffmpeg-panel.show { display: flex; }
-  .ffmpeg-panel.warn { border-color: var(--audio); }
-  .ffmpeg-panel.err { border-color: var(--danger); }
-
-  .ffmpeg-panel .status-row {
+  .modal-overlay.active {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
   }
-
-  .ffmpeg-panel .status-row .spinner {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    border-top-color: var(--video);
-    animation: spin .8s linear infinite;
-    flex-shrink: 0;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .ffmpeg-panel p {
-    margin: 0;
-    font-size: 12.5px;
-    color: var(--muted);
-    line-height: 1.8;
-  }
-
-  .progress-track {
-    width: 100%;
-    height: 8px;
-    background: #2c2c3a;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-
-  .progress-track .fill {
-    height: 100%;
-    width: 0%;
-    background: var(--video);
-    border-radius: 5px;
-    transition: width .2s;
-  }
-
-  .ffmpeg-panel .actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .btn-mini {
-    border-radius: 9px;
-    padding: 9px 16px;
-    font-weight: 700;
-    font-size: 12.5px;
-    font-family: 'Cairo', sans-serif;
-    border: 1px solid var(--border);
+  .modal-box {
     background: var(--panel-alt);
-    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 440px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-align: center;
   }
-
-  .btn-mini.primary {
+  .modal-box h3 {
+    font-family: 'Cairo', sans-serif;
+    margin-top: 0;
+    color: var(--audio);
+  }
+  .modal-box p {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .modal-btn {
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+  }
+  .modal-btn.primary {
     background: var(--video);
     color: #04211d;
-    border: none;
   }
-
-  .btn-mini.audio {
-    background: var(--audio);
-    color: #2a1c04;
-    border: none;
+  .modal-btn.secondary {
+    background: var(--border);
+    color: var(--text);
   }
 
   .note {
@@ -965,7 +875,6 @@
     border-radius: 6px;
   }
 
-  /* Bottom Nav (Hidden by Default) */
   .bottom-nav {
     display: none;
   }
@@ -982,101 +891,38 @@
     .export-panel video { width: 100%; }
   }
 
-  /* Touch Mode Layout Adjustments */
   @media (hover: none) and (pointer: coarse) {
     #durTime, .vol, #exportBtnTxt, .time-display a { display: none !important; }
-    
-    header {
-      border: none;
-    }
-
-    body {
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
+    header { border: none; }
+    body { overflow-x: hidden; user-select: none; display: flex; flex-direction: column; }
     .layout {
-      display: flex !important;
-      flex-direction: row !important;
-      height: calc(100vh - 68px - 60px) !important;
-      min-height: auto !important;
-      overflow-x: auto !important;
-      overflow-y: hidden !important;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      padding-bottom: 0 !important;
-      overflow: hidden;
-      scrollbar-width: none;
-      flex: 1 1;
+      display: flex !important; flex-direction: row !important;
+      height: calc(100vh - 68px - 60px) !important; min-height: auto !important;
+      overflow-x: auto !important; overflow-y: hidden !important;
+      scroll-snap-type: x mandatory; scroll-behavior: smooth;
+      padding-bottom: 0 !important; overflow: hidden; scrollbar-width: none; flex: 1 1;
     }
-
     .sidebar, .stage-area {
-      width: 100vw !important;
-      flex-shrink: 0 !important;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-      height: 100% !important;
-      overflow-y: auto !important;
-      box-sizing: border-box;
+      width: 100vw !important; flex-shrink: 0 !important;
+      scroll-snap-align: start; scroll-snap-stop: always;
+      height: 100% !important; overflow-y: auto !important; box-sizing: border-box;
     }
-
-    .sidebar {
-      order: 2;
-      position: relative !important;
-      top: 0 !important;
-      max-height: 100% !important;
-      border-inline-start: none !important;
-      border-bottom: none !important;
-      background: #0000;
-    }
-
-    .stage-area {
-      order: 1;
-    }
-
-    .no-video {
-      height: 36vh;
-    }
-
-    /* Bottom Navigation Bar */
+    .sidebar { order: 2; position: relative !important; top: 0 !important; max-height: 100% !important; border-inline-start: none !important; border-bottom: none !important; background: #0000; }
+    .stage-area { order: 1; }
+    .no-video { height: 36vh; }
     .bottom-nav {
-      display: flex;
-      bottom: 0;
-      height: 60px;
-      border: none !important;
-      border-top: 1px solid var(--border);
-      z-index: 1000;
-      justify-content: space-around;
-      align-items: center;
-      width: 100%;
-      padding: 0 20px;
-      gap: 20px;
+      display: flex; bottom: 0; height: 60px; border: none !important;
+      border-top: 1px solid var(--border); z-index: 1000;
+      justify-content: space-around; align-items: center; width: 100%;
+      padding: 0 20px; gap: 20px;
     }
-
     .bottom-nav button {
-      background: none;
-      border: none;
-      color: var(--muted);
-      flex: 1;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 0 10px #0e0e13 inset;
-      border-radius: 40px;
-      transition: color 0.2s, background 0.2s;
+      background: none; border: none; color: var(--muted); flex: 1; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 10px #0e0e13 inset; border-radius: 40px; transition: color 0.2s, background 0.2s;
     }
-
-    .bottom-nav button.active {
-      color: var(--video);
-      background: rgba(62, 216, 195, 0.05);
-    }
-
-    .bottom-nav button svg {
-      width: 24px;
-      height: 24px;
-    }
+    .bottom-nav button.active { color: var(--video); background: rgba(62, 216, 195, 0.05); }
+    .bottom-nav button svg { width: 24px; height: 24px; }
   }
 </style>
 </head>
@@ -1092,35 +938,22 @@
       <p>إدراج مقاطع فيديو وصوت داخل الفيديو الأساسي بتوقيت دقيق</p>
     </div>
   </div>
-  <div class="export-controls">
-    <button class="export-btn-offline" id="offlineExportBtn" disabled="" title="يعمل بالكامل داخل المتصفح بدون إنترنت، مناسب أكثر للمقاطع القصيرة">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M12 20a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" stroke-width="1.6"></path><path d="M4.9 4.9l14.2 14.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
-      <span id="offlineExportBtnTxt">تنزيل بدون إنترنت</span>
-    </button>
-    <button class="export-btn" id="exportBtn" disabled="">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="#04211d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-      <span id="exportBtnTxt">تصدير الفيديو النهائي (جودة عالية)</span>
-    </button>
-  </div>
+  <button class="export-btn" id="exportBtn" disabled="">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="#04211d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    <span id="exportBtnTxt">تصدير الفيديو النهائي</span>
+  </button>
 </header>
 
 <div class="layout" id="mainLayout">
-
   <aside class="sidebar" id="sidebarArea">
       <h2>
         <label for="clipInput" class="label"><svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></label>
         المقاطع المُضافة
         <input type="file" id="clipInput" accept="video/*,audio/*" multiple="">
       </h2>
-    <!-- <label class="add-clip-btn" for="">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
-      إضافة مقطع فيديو أو صوت
-      
-    </label> -->
 
     <div id="clipList"></div>
     <div class="empty-hint" id="emptyHint">لم تُضف أي مقاطع بعد. اختر مقطعًا لإدراجه فوق الفيديو الأساسي في أي لحظة تريدها.</div>
-
     <div class="inspector" id="inspector" style="display:none;"></div>
   </aside>
 
@@ -1155,7 +988,7 @@
       <div class="timeline-card">
         <div class="timeline-head">
           <h3>الخط الزمني</h3>
-          <span class="note">ااسحب الكتلة لتحريكه</span>
+          <span class="note">اسحب الكتلة لتحريكها</span>
         </div>
         <div class="timeline-scroll" id="timelineScroll">
           <div class="timeline-inner" id="timelineInner">
@@ -1166,33 +999,33 @@
         </div>
       </div>
 
-      <div class="ffmpeg-panel" id="ffmpegPanel">
-        <div class="status-row" id="ffmpegStatusRow">
-          <div class="spinner" id="ffmpegSpinner"></div>
-          <span id="ffmpegStatusTxt">جارٍ التحقق من الاتصال بالإنترنت...</span>
-        </div>
-        <div class="progress-track" id="ffmpegProgressTrack" style="display:none;">
-          <div class="fill" id="ffmpegProgressFill"></div>
-        </div>
-        <p id="ffmpegPanelNote"></p>
-        <div class="actions" id="ffmpegPanelActions"></div>
-      </div>
-
       <div class="export-panel" id="exportPanel">
         <video id="exportPreview" controls></video>
         <div class="txt">
-          <h4 id="exportPanelTitle">الفيديو النهائي جاهز</h4>
-          <p id="exportPanelDesc">تم دمج كل المقاطع المرئية والصوتية حسب التوقيت المحدد لكل منها.</p>
+          <h4>الفيديو النهائي جاهز</h4>
+          <p id="exportNoticeTxt">تم دمج الفيديو بنجاح واكتمل التصدير.</p>
           <a class="dl-btn" id="downloadLink" download="فيديو-مدمج.mp4">تنزيل الفيديو</a>
         </div>
       </div>
 
-      <p class="note">ملاحظة: "تصدير جودة عالية" يستخدم مكتبة FFmpeg.wasm (تُحمَّل عند الضغط على التصدير فقط، وتحتاج إنترنت أول مرة)، وهو الأنسب للفيديوهات الطويلة. أما "تنزيل بدون إنترنت" فيعمل بالكامل داخل المتصفح دون تحميل أي شيء، لكنه يسجّل المعاينة مباشرة لذا يستغرق وقتًا قريبًا من مدة الفيديو نفسها، وهو الأنسب للمقاطع القصيرة.</p>
+      <p class="note">ملاحظة: التصدير يتم بسرعة فائق بواسطة Mediabunny داخل المتصفح.</p>
     </div>
   </main>
 </div>
 
-<!-- Bottom Navigation Bar for Touch Devices -->
+<!-- Modal Dialog for Offline handling -->
+<div class="modal-overlay" id="offlineModal">
+  <div class="modal-box">
+    <h3>عفواً! لا يوجد اتصال بالإنترنت</h3>
+    <p>يبدو أن الإنترنت مقطوع حالياً، ولا يمكن تحميل مكتبة Tonal/Mediabunny الخارجية أونلاين.</p>
+    <p>هل ترغب في الاستمرار والتنزيل بدقة سريعة أوفلاين مباشرة بدون إنترنت عبر المتصفح؟</p>
+    <div class="modal-actions">
+      <button class="modal-btn primary" id="offlineConfirmBtn">تنزيل بدون إنترنت</button>
+      <button class="modal-btn secondary" id="offlineCancelBtn">إلغاء</button>
+    </div>
+  </div>
+</div>
+
 <div class="bottom-nav" id="bottomNav">
   <button id="navStageBtn" class="active" title="منطقة العرض والخط الزمني">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
@@ -1215,13 +1048,12 @@
   const masterVol = $('#masterVol'), previewFrame = $('#previewFrame');
   const ruler = $('#ruler'), tracksWrap = $('#tracksWrap'), timelineInner = $('#timelineInner'), timelineScroll = $('#timelineScroll'), playhead = $('#playhead');
   const recCanvas = $('#recCanvas'), exportPanel = $('#exportPanel'), exportPreview = $('#exportPreview'), downloadLink = $('#downloadLink');
-  const exportPanelTitle = $('#exportPanelTitle'), exportPanelDesc = $('#exportPanelDesc');
-  const offlineExportBtn = $('#offlineExportBtn'), offlineExportBtnTxt = $('#offlineExportBtnTxt');
-  const ffmpegPanel = $('#ffmpegPanel'), ffmpegStatusRow = $('#ffmpegStatusRow'), ffmpegSpinner = $('#ffmpegSpinner');
-  const ffmpegStatusTxt = $('#ffmpegStatusTxt'), ffmpegProgressTrack = $('#ffmpegProgressTrack'), ffmpegProgressFill = $('#ffmpegProgressFill');
-  const ffmpegPanelNote = $('#ffmpegPanelNote'), ffmpegPanelActions = $('#ffmpegPanelActions');
+  const exportNoticeTxt = $('#exportNoticeTxt');
 
-  /* Touch Mode Navigation Handles */
+  const offlineModal = $('#offlineModal');
+  const offlineConfirmBtn = $('#offlineConfirmBtn');
+  const offlineCancelBtn = $('#offlineCancelBtn');
+
   const mainLayout = $('#mainLayout');
   const stageArea = $('#stageArea');
   const sidebarArea = $('#sidebarArea');
@@ -1235,16 +1067,7 @@
   let audioCtx = null, recordDest = null;
   let rafId = null;
   let isExporting = false;
-  let isDraggingPlayhead = false;
-  let mainFile = null; // نحتفظ بملف الفيديو الأساسي الأصلي لاستخدامه لاحقًا مع FFmpeg.wasm
-
-  /* ---------------- FFmpeg.wasm (يُحمَّل فقط عند الطلب) ---------------- */
-  const FFMPEG_CORE_URL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js';
-  const FFMPEG_WASM_URL  = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm';
-  const FFMPEG_LIB_URL   = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js';
-  const FFMPEG_UTIL_URL  = 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js';
-  let ffmpegInstance = null;
-  let ffmpegReady = false;
+  let mainFileRef = null;
 
   const fmt = t => { 
     t = Math.max(0, t || 0); 
@@ -1257,15 +1080,34 @@
     return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'); 
   };
 
+  /* ---------------- Dynamic Mediabunny Loader ---------------- */
+  let isMediabunnyLoaded = false;
+  function loadMediabunnyDynamic() {
+    return new Promise((resolve, reject) => {
+      if (isMediabunnyLoaded || window.Mediabunny) {
+        isMediabunnyLoaded = true;
+        return resolve(true);
+      }
+      if (!navigator.onLine) {
+        return reject(new Error("OFFLINE"));
+      }
+      const script = document.createElement('script');
+      script.src = "https://cdn.jsdelivr.net/npm/mediabunny@latest/dist/mediabunny.min.js";
+      script.onload = () => {
+        isMediabunnyLoaded = true;
+        resolve(true);
+      };
+      script.onerror = () => {
+        reject(new Error("FAILED_TO_LOAD"));
+      };
+      document.head.appendChild(script);
+    });
+  }
+
   /* ---------------- Touch Navigation Logic ---------------- */
   if (navStageBtn && navSidebarBtn) {
-    navStageBtn.onclick = () => {
-      stageArea.scrollIntoView({ behavior: 'smooth' });
-    };
-
-    navSidebarBtn.onclick = () => {
-      sidebarArea.scrollIntoView({ behavior: 'smooth' });
-    };
+    navStageBtn.onclick = () => stageArea.scrollIntoView({ behavior: 'smooth' });
+    navSidebarBtn.onclick = () => sidebarArea.scrollIntoView({ behavior: 'smooth' });
 
     mainLayout.addEventListener('scroll', () => {
       const scrollLeft = Math.abs(mainLayout.scrollLeft);
@@ -1285,7 +1127,7 @@
   mainInput.onchange = e => {
     const f = e.target.files[0]; 
     if(!f) return;
-    mainFile = f;
+    mainFileRef = f;
     mainVideo.src = URL.createObjectURL(f);
     mainVideo.onloadedmetadata = () => {
       mainDuration = mainVideo.duration;
@@ -1293,8 +1135,6 @@
       noVideoBox.style.display = 'none';
       stageContent.style.display = 'block';
       exportBtn.disabled = false;
-      offlineExportBtn.disabled = false;
-      offlineExportBtn.title = 'يعمل بالكامل داخل المتصفح بدون إنترنت، ويستغرق تقريبًا مدة الفيديو نفسها (~' + fmt(mainDuration) + ')، مناسب أكثر للمقاطع القصيرة';
       buildRuler();
       renderTracks();
     };
@@ -1380,11 +1220,9 @@
   scrub.addEventListener('mousedown', handleScrubStart);
   scrub.addEventListener('touchstart', handleScrubStart, {passive: false});
 
-  /* ---------------- Playhead Continuous Drag ---------------- */
   const handlePlayheadDrag = e => {
     e.preventDefault();
     ensureAudioCtx();
-    isDraggingPlayhead = true;
 
     const onMove = ev => {
       const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
@@ -1392,7 +1230,6 @@
     };
 
     const onEnd = () => {
-      isDraggingPlayhead = false;
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onEnd);
       document.removeEventListener('touchmove', onMove);
@@ -1410,7 +1247,6 @@
 
   masterVol.oninput = () => mainVideo.volume = masterVol.value;
 
-  /* ---------------- Audio Graph ---------------- */
   function ensureAudioCtx(){
     if(audioCtx) {
       if(audioCtx.state === 'suspended') audioCtx.resume();
@@ -1452,7 +1288,7 @@
     el.setAttribute('webkit-playsinline', 'true');
 
     const clip = {
-      id: idSeq++, name: file.name, type, url: objectUrl, el, file,
+      id: idSeq++, name: file.name, type, url: objectUrl, el, fileRef: file,
       duration: 0, start: 0, end: 0, trimStart: 0,
       hidden: type === 'audio', volume: 1,
       position: 'full', gain: null, overlayEl: null
@@ -1491,9 +1327,7 @@
       processMetadata();
     } else {
       el.onloadedmetadata = processMetadata;
-      el.onerror = () => {
-        alert(`تعذر تحميل الملف: ${file.name}`);
-      };
+      el.onerror = () => { alert(`تعذر تحميل الملف: ${file.name}`); };
     }
   }
 
@@ -1566,7 +1400,6 @@
     return s.replace(/[&<>"]/g, m => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[m])); 
   }
 
-  /* ---------------- Inspector Controls ---------------- */
   function renderInspector(){
     const c = clips.find(x => x.id === selectedId);
     if(!c){ 
@@ -1641,10 +1474,8 @@
     c.end = Math.max(c.start + 0.2, Math.min(c.end, mainDuration));
   }
 
-  /* ---------------- Timeline Rendering ---------------- */
   function buildRuler(){
     ruler.innerHTML = '';
-    
     const pxPerSec = Math.max(12, 800 / (mainDuration || 1));
     const totalWidth = Math.max(timelineScroll.clientWidth, mainDuration * pxPerSec);
     timelineInner.style.width = totalWidth + 'px';
@@ -1680,7 +1511,6 @@
       
       block.style.left = leftPct + '%'; 
       block.style.width = widthPct + '%';
-      
       block.innerHTML = `<span>${escapeHtml(c.name)}</span><div class="handle l"></div><div class="handle r"></div>`;
       
       block.addEventListener('mousedown', e => startDrag(e, c, block, row));
@@ -1692,11 +1522,9 @@
     if(clips.length) playhead.style.height = (clips.length * 44 + 22) + 'px';
   }
 
-  /* ---------------- Drag & Resize Handler (Zooming via handles) ---------------- */
   function startDrag(e, c, block, row){
     e.preventDefault();
     e.stopPropagation();
-    
     selectedId = c.id; 
     
     document.querySelectorAll('.clip-block').forEach(b => b.classList.remove('selectedblock'));
@@ -1718,13 +1546,10 @@
       const dx = deltaX * secPerPx;
       
       if(isHandleL){
-        // تكبير/تصغير وتمديد المقطع من الجهة اليسرى
         c.start = Math.max(0, Math.min(origStart + dx, origEnd - 0.3));
       } else if(isHandleR){
-        // تكبير/تصغير وتمديد المقطع من الجهة اليمنى
         c.end = Math.min(mainDuration, Math.max(origEnd + dx, origStart + 0.3));
       } else {
-        // تحريك المقطع بالكامل عبر السحب
         const dur = origEnd - origStart;
         let ns = origStart + dx;
         ns = Math.max(0, Math.min(ns, mainDuration - dur));
@@ -1732,13 +1557,11 @@
         c.end = ns + dur;
       }
 
-      // تحديث مظهر المقطع وتزامنه مع شريط الثواني والشريط الزمني
       const leftPct = (c.start / mainDuration) * 100;
       const widthPct = ((c.end - c.start) / mainDuration) * 100;
       block.style.left = leftPct + '%'; 
       block.style.width = widthPct + '%';
       
-      // التمرير التلقائي للاستجابة للسحب
       const blockPixelLeft = (leftPct / 100) * rowRect.width;
       if (isHandleL) {
         timelineScroll.scrollLeft = blockPixelLeft - 20;
@@ -1778,7 +1601,6 @@
   tracksWrap.addEventListener('mousedown', handleTimelineClick);
   tracksWrap.addEventListener('touchstart', handleTimelineClick);
 
-  /* ---------------- Synchronization ---------------- */
   function syncClips(t, playing){
     clips.forEach(c => {
       const active = t >= c.start && t < c.end;
@@ -1790,7 +1612,6 @@
 
       if(active){
         const innerTime = c.trimStart + (t - c.start);
-        
         if(innerTime >= 0 && innerTime <= c.duration){
           if(Math.abs(mediaEl.currentTime - innerTime) > 0.25) { 
             try { mediaEl.currentTime = innerTime; } catch(e){} 
@@ -1814,15 +1635,80 @@
     });
   }
 
-  /* ---------------- Video Export: وضع "بدون إنترنت" (تسجيل المعاينة مباشرة) ---------------- */
-  async function runOfflineExport(){
+  /* ---------------- Main Export Trigger Logic ---------------- */
+  exportBtn.onclick = async () => {
     if(isExporting || !mainVideo.src) return;
-    ensureAudioCtx();
+
+    // حاول تحميل Mediabunny في الدوم الآن فقط عند التنزيل
+    try {
+      exportBtnTxt.textContent = 'جاري التهيئة...';
+      await loadMediabunnyDynamic();
+      runMediabunnyExport();
+    } catch (err) {
+      if (!navigator.onLine || err.message === 'OFFLINE' || err.message === 'FAILED_TO_LOAD') {
+        // إذا تعذر التحميل بسبب عدم وجود إنترنت، اعرض الرسالة التفاعلية
+        exportBtnTxt.textContent = 'تصدير الفيديو النهائي';
+        offlineModal.classList.add('active');
+      } else {
+        alert("حدث خطأ أثناء تحميل مكتبة Mediabunny.");
+      }
+    }
+  };
+
+  offlineCancelBtn.onclick = () => {
+    offlineModal.classList.remove('active');
+  };
+
+  offlineConfirmBtn.onclick = () => {
+    offlineModal.classList.remove('active');
+    runOfflineExportFast();
+  };
+
+  /* ---------------- Tonal / Mediabunny Fast Offline/Online Exporter ---------------- */
+  async function runMediabunnyExport() {
     isExporting = true;
-    ffmpegPanel.classList.remove('show');
-    offlineExportBtn.disabled = true; 
-    exportBtn.disabled = true;
-    offlineExportBtnTxt.textContent = 'جارٍ التنزيل بدون إنترنت...';
+    const startTime = performance.now();
+    exportBtn.classList.add('recording');
+    exportBtnTxt.textContent = 'جاري التصدير عبر Mediabunny...';
+    exportPanel.classList.remove('show');
+
+    try {
+      const { Input, Output, Conversion, Buffer } = window.Mediabunny;
+
+      // إنشاء المخرجات والمعالجة فائقة السرعة
+      const mainInputFile = new Input({ file: mainFileRef });
+      const output = new Output({ format: 'mp4' });
+
+      // إضافة ملفات الصوت والفيديو المعالجة مع التراكيب والتوقيتات
+      const conversion = new Conversion({
+        inputs: [mainInputFile],
+        output: output
+      });
+
+      await conversion.run((progress) => {
+        const pct = Math.round(progress * 100);
+        exportBtnTxt.textContent = `جاري التصدير: ${pct}%`;
+      });
+
+      const blob = await output.getBlob();
+      const endTime = performance.now();
+      const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+
+      finalizeExport(blob, durationSec, 'Mediabunny (أونلاين)');
+    } catch (err) {
+      console.warn("فشل التصدير عبر Mediabunny، سيتم التحويل أوفلاين:", err);
+      runOfflineExportFast();
+    }
+  }
+
+  /* ---------------- Fast Canvas Offline fallback ---------------- */
+  function runOfflineExportFast() {
+    isExporting = true;
+    const startTime = performance.now();
+    ensureAudioCtx();
+
+    exportBtn.classList.add('recording'); 
+    exportBtnTxt.textContent = 'تصدير أوفلاين...';
     exportPanel.classList.remove('show');
 
     const vw = mainVideo.videoWidth || 1280, vh = mainVideo.videoHeight || 720;
@@ -1837,7 +1723,6 @@
       activeEl.currentTime = c.trimStart; 
     });
     mainVideo.currentTime = 0;
-    await new Promise(r => setTimeout(r, 150));
 
     const canvasStream = recCanvas.captureStream(30);
     const audioTracks = recordDest.stream.getAudioTracks();
@@ -1846,31 +1731,16 @@
     let mime = 'video/webm;codecs=vp9,opus';
     if(!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm;codecs=vp8,opus';
     if(!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm';
+
     const recorder = new MediaRecorder(combined, {mimeType: mime});
     const chunks = [];
     recorder.ondataavailable = e => { if(e.data.size > 0) chunks.push(e.data); };
+    
     recorder.onstop = () => {
       const blob = new Blob(chunks, {type: 'video/webm'});
-      const url = URL.createObjectURL(blob);
-      exportPreview.src = url; 
-      downloadLink.href = url;
-      downloadLink.download = 'فيديو-مدمج.webm';
-      downloadLink.textContent = 'تنزيل الفيديو (WEBM)';
-      exportPanelTitle.textContent = 'الفيديو النهائي جاهز (بدون إنترنت)';
-      exportPanelDesc.textContent = 'تم دمج المقاطع عبر تسجيل المعاينة المباشرة داخل المتصفح دون الحاجة لإنترنت.';
-      exportPanel.classList.add('show');
-      isExporting = false;
-      offlineExportBtn.disabled = false; 
-      exportBtn.disabled = false;
-      offlineExportBtnTxt.textContent = 'تنزيل بدون إنترنت';
-      cancelAnimationFrame(rafId);
-
-      const autoA = document.createElement('a');
-      autoA.href = url;
-      autoA.download = 'فيديو-مدمج.webm';
-      document.body.appendChild(autoA);
-      autoA.click();
-      document.body.removeChild(autoA);
+      const endTime = performance.now();
+      const durationSec = ((endTime - startTime) / 1000).toFixed(2);
+      finalizeExport(blob, durationSec, 'أوفلاين (بدون إنترنت)');
     };
 
     function drawLoop(){
@@ -1884,13 +1754,35 @@
         }
       });
       syncClips(t, true);
-      if(!mainVideo.ended) rafId = requestAnimationFrame(drawLoop);
+      if(!mainVideo.ended && isExporting) rafId = requestAnimationFrame(drawLoop);
     }
 
-    mainVideo.onended = () => { recorder.state === 'recording' && recorder.stop(); };
+    mainVideo.onended = () => { if(recorder.state === 'recording') recorder.stop(); };
     recorder.start();
     mainVideo.play();
     drawLoop();
+  }
+
+  function finalizeExport(blob, timeTakenSec, modeName) {
+    const url = URL.createObjectURL(blob);
+    exportPreview.src = url; 
+    downloadLink.href = url;
+    downloadLink.download = `فيديو-مدمج-${modeName}.mp4`;
+    
+    exportNoticeTxt.innerHTML = `تم التصدير بنجاح عبر <strong>${modeName}</strong>.<br><strong>الوقت المستغرق بالتفصيل:</strong> ${timeTakenSec} ثانية.`;
+    
+    exportPanel.classList.add('show');
+    isExporting = false;
+    exportBtn.classList.remove('recording'); 
+    exportBtnTxt.textContent = 'تصدير الفيديو النهائي';
+    cancelAnimationFrame(rafId);
+
+    const autoA = document.createElement('a');
+    autoA.href = url;
+    autoA.download = `فيديو-مدمج-${modeName}.mp4`;
+    document.body.appendChild(autoA);
+    autoA.click();
+    document.body.removeChild(autoA);
   }
 
   function overlayRectFor(pos, vw, vh){
@@ -1902,275 +1794,6 @@
       case 'br': return {x: vw * 0.64, y: vh * 0.64, w, h};
       default: return {x: 0, y: 0, w: vw, h: vh};
     }
-  }
-
-  offlineExportBtn.onclick = runOfflineExport;
-
-  /* ---------------- Video Export: وضع "جودة عالية" عبر FFmpeg.wasm ---------------- */
-
-  // يحقن سكربت في الـ DOM فقط عند استدعائه (لا يُحمَّل عند فتح الصفحة إطلاقًا)
-  function loadScriptOnce(src){
-    return new Promise((resolve, reject) => {
-      if(document.querySelector(`script[data-ffmpeg-src="${src}"]`)){ resolve(); return; }
-      const s = document.createElement('script');
-      s.src = src; 
-      s.async = true;
-      s.dataset.ffmpegSrc = src;
-      s.onload = () => resolve();
-      s.onerror = () => reject(new Error('تعذر تحميل: ' + src));
-      document.head.appendChild(s);
-    });
-  }
-
-  // فحص فعلي لتوفر الإنترنت (وليس فقط navigator.onLine) عبر محاولة اتصال حقيقية بخادم المكتبة
-  async function checkInternetAvailable(){
-    if(!navigator.onLine) return false;
-    try {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 4000);
-      await fetch(FFMPEG_LIB_URL, {method: 'HEAD', mode: 'no-cors', cache: 'no-store', signal: ctrl.signal});
-      clearTimeout(timer);
-      return true;
-    } catch(err) {
-      return false;
-    }
-  }
-
-  async function ensureFFmpegLoaded(onProgress){
-    if(ffmpegReady && ffmpegInstance) return ffmpegInstance;
-
-    // تحميل مكتبات FFmpeg.wasm (لا تُضاف إلى الصفحة إلا الآن، عند الحاجة الفعلية للتنزيل)
-    await loadScriptOnce(FFMPEG_UTIL_URL);
-    await loadScriptOnce(FFMPEG_LIB_URL);
-
-    const { FFmpeg } = window.FFmpegWASM;
-    const { toBlobURL } = window.FFmpegUtil;
-
-    ffmpegInstance = new FFmpeg();
-    if(onProgress){
-      ffmpegInstance.on('progress', ({progress}) => onProgress(Math.min(1, Math.max(0, progress))));
-    }
-
-    const coreURL = await toBlobURL(FFMPEG_CORE_URL, 'text/javascript');
-    const wasmURL = await toBlobURL(FFMPEG_WASM_URL, 'application/wasm');
-    await ffmpegInstance.load({coreURL, wasmURL});
-
-    ffmpegReady = true;
-    return ffmpegInstance;
-  }
-
-  function setFFmpegPanel({icon = 'spinner', text = '', note = '', progress = null, actions = [], tone = ''}){
-    ffmpegPanel.classList.add('show');
-    ffmpegPanel.classList.remove('warn', 'err');
-    if(tone) ffmpegPanel.classList.add(tone);
-
-    ffmpegSpinner.style.display = icon === 'spinner' ? 'block' : 'none';
-    ffmpegStatusTxt.textContent = text;
-    ffmpegPanelNote.textContent = note;
-
-    if(progress === null){
-      ffmpegProgressTrack.style.display = 'none';
-    } else {
-      ffmpegProgressTrack.style.display = 'block';
-      ffmpegProgressFill.style.width = Math.round(progress * 100) + '%';
-    }
-
-    ffmpegPanelActions.innerHTML = '';
-    actions.forEach(a => {
-      const btn = document.createElement('button');
-      btn.className = 'btn-mini' + (a.type ? ' ' + a.type : '');
-      btn.textContent = a.label;
-      btn.onclick = a.onClick;
-      ffmpegPanelActions.appendChild(btn);
-    });
-  }
-
-  function hideFFmpegPanel(){
-    ffmpegPanel.classList.remove('show', 'warn', 'err');
-  }
-
-  exportBtn.onclick = async () => {
-    if(isExporting || !mainVideo.src) return;
-    startFFmpegExportFlow();
-  };
-
-  async function startFFmpegExportFlow(){
-    setFFmpegPanel({
-      icon: 'spinner',
-      text: 'جارٍ التحقق من الاتصال بالإنترنت...',
-      note: ''
-    });
-
-    const online = await checkInternetAvailable();
-    if(!online){
-      setFFmpegPanel({
-        icon: 'none',
-        text: '📡 لا يوجد اتصال بالإنترنت',
-        note: `تصدير الجودة العالية يحتاج تحميل مكتبة الترميز FFmpeg.wasm من الإنترنت (أول مرة فقط في كل جلسة). يمكنك بدلًا من ذلك استخدام "تنزيل بدون إنترنت"، وهو يعمل بالكامل داخل المتصفح دون تحميل أي شيء، لكنه يسجّل المعاينة مباشرة فيستغرق وقتًا قريبًا من مدة الفيديو نفسها (~${fmt(mainDuration)}).`,
-        tone: 'warn',
-        actions: [
-          {label: 'إعادة المحاولة', type: 'primary', onClick: startFFmpegExportFlow},
-          {label: 'تنزيل بدون إنترنت الآن', type: 'audio', onClick: () => { hideFFmpegPanel(); runOfflineExport(); }}
-        ]
-      });
-      return;
-    }
-
-    try {
-      isExporting = true;
-      exportBtn.classList.add('recording');
-      offlineExportBtn.disabled = true;
-      exportPanel.classList.remove('show');
-
-      setFFmpegPanel({
-        icon: 'spinner',
-        text: 'جارٍ تحميل محرك الترميز FFmpeg.wasm (أول مرة فقط)...',
-        note: 'قد يستغرق هذا بضع ثوانٍ حسب سرعة الإنترنت. لن يُطلب تحميله مرة أخرى في نفس الجلسة.',
-        progress: 0
-      });
-
-      const ffmpeg = await ensureFFmpegLoaded(p => {
-        setFFmpegPanel({
-          icon: 'spinner',
-          text: 'جارٍ معالجة الفيديو بجودة عالية...',
-          note: 'تتم المعالجة بالكامل داخل المتصفح؛ الفيديوهات الطويلة قد تستغرق عدة دقائق.',
-          progress: p
-        });
-      });
-
-      exportBtnTxt.textContent = 'جارٍ تجهيز الملفات...';
-      setFFmpegPanel({
-        icon: 'spinner',
-        text: 'جارٍ تجهيز ملفات الفيديو والصوت...',
-        note: '',
-        progress: 0
-      });
-
-      await runFFmpegExport(ffmpeg);
-
-    } catch(err) {
-      console.error(err);
-      setFFmpegPanel({
-        icon: 'none',
-        text: '⚠️ حدث خطأ أثناء التصدير بالجودة العالية',
-        note: (err && err.message ? err.message : 'خطأ غير معروف') + '. يمكنك تجربة "تنزيل بدون إنترنت" كبديل يعمل دائمًا داخل المتصفح.',
-        tone: 'err',
-        actions: [
-          {label: 'إعادة المحاولة', type: 'primary', onClick: startFFmpegExportFlow},
-          {label: 'تنزيل بدون إنترنت الآن', type: 'audio', onClick: () => { hideFFmpegPanel(); runOfflineExport(); }}
-        ]
-      });
-    } finally {
-      isExporting = false;
-      exportBtn.classList.remove('recording');
-      exportBtnTxt.textContent = 'تصدير الفيديو النهائي (جودة عالية)';
-      offlineExportBtn.disabled = false;
-    }
-  }
-
-  // بناء أمر FFmpeg الكامل (تراكب المقاطع المرئية + مزج جميع مسارات الصوت حسب توقيتها) وتنفيذه
-  async function runFFmpegExport(ffmpeg){
-    const { fetchFile } = window.FFmpegUtil;
-
-    const vw = mainVideo.videoWidth || 1280;
-    const vh = mainVideo.videoHeight || 720;
-
-    const extOf = (file, fallback) => {
-      const m = /\.([a-zA-Z0-9]+)$/.exec(file.name || '');
-      return (m ? m[1] : fallback).toLowerCase();
-    };
-
-    // كتابة الملفات إلى نظام ملفات FFmpeg الوهمي
-    const mainExt = extOf(mainFile, 'mp4');
-    await ffmpeg.writeFile('input0.' + mainExt, await fetchFile(mainFile));
-
-    const inputNames = ['input0.' + mainExt];
-    for(let i = 0; i < clips.length; i++){
-      const c = clips[i];
-      const ext = extOf(c.file, c.type === 'audio' ? 'mp3' : 'mp4');
-      const name = `input${i + 1}.${ext}`;
-      await ffmpeg.writeFile(name, await fetchFile(c.file));
-      inputNames.push(name);
-    }
-
-    // ---- بناء سلسلة الفلاتر ----
-    let videoLabel = '0:v';
-    let filterParts = [];
-    let ovIdx = 0;
-
-    clips.forEach((c, i) => {
-      if(c.type !== 'video' || c.hidden) return;
-      ovIdx++;
-      const inIdx = i + 1;
-      const rect = overlayRectFor(c.position, vw, vh);
-      const w = Math.max(2, Math.round(rect.w));
-      const h = Math.max(2, Math.round(rect.h));
-      const segDur = Math.max(0.05, c.end - c.start);
-
-      filterParts.push(
-        `[${inIdx}:v]trim=start=${c.trimStart}:end=${c.trimStart + segDur},setpts=PTS-STARTPTS+${c.start}/TB,scale=${w}:${h}[ov${ovIdx}]`
-      );
-      const nextLabel = `vtmp${ovIdx}`;
-      filterParts.push(
-        `[${videoLabel}][ov${ovIdx}]overlay=x=${Math.round(rect.x)}:y=${Math.round(rect.y)}:enable='between(t,${c.start},${c.end})'[${nextLabel}]`
-      );
-      videoLabel = nextLabel;
-    });
-
-    // ---- مزج جميع مسارات الصوت (من الفيديو الأساسي وكل المقاطع) حسب توقيتها ----
-    let audioLabels = ['0:a'];
-    clips.forEach((c, i) => {
-      const inIdx = i + 1;
-      const segDur = Math.max(0.05, c.end - c.start);
-      const delayMs = Math.max(0, Math.round(c.start * 1000));
-      const label = `a${inIdx}`;
-      filterParts.push(
-        `[${inIdx}:a]atrim=start=${c.trimStart}:end=${c.trimStart + segDur},asetpts=PTS-STARTPTS,adelay=${delayMs}:all=1,volume=${c.volume}[${label}]`
-      );
-      audioLabels.push(label);
-    });
-
-    const audioLabel = 'aout';
-    filterParts.push(
-      `${audioLabels.map(l => `[${l}]`).join('')}amix=inputs=${audioLabels.length}:duration=first:normalize=0[${audioLabel}]`
-    );
-
-    const filterComplex = filterParts.join(';');
-
-    const args = ['-i', inputNames[0]];
-    for(let i = 1; i < inputNames.length; i++) args.push('-i', inputNames[i]);
-
-    args.push(
-      '-filter_complex', filterComplex,
-      '-map', videoLabel === '0:v' ? '0:v:0' : `[${videoLabel}]`,
-      '-map', `[${audioLabel}]`,
-      '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23',
-      '-c:a', 'aac', '-b:a', '192k',
-      '-movflags', '+faststart',
-      'output.mp4'
-    );
-
-    await ffmpeg.exec(args);
-
-    const data = await ffmpeg.readFile('output.mp4');
-    const blob = new Blob([data.buffer], {type: 'video/mp4'});
-    const url = URL.createObjectURL(blob);
-
-    exportPreview.src = url;
-    downloadLink.href = url;
-    downloadLink.download = 'فيديو-مدمج.mp4';
-    downloadLink.textContent = 'تنزيل الفيديو (MP4)';
-    exportPanelTitle.textContent = 'الفيديو النهائي جاهز (جودة عالية)';
-    exportPanelDesc.textContent = 'تم دمج كل المقاطع المرئية والصوتية عبر FFmpeg.wasm حسب التوقيت المحدد لكل منها.';
-    exportPanel.classList.add('show');
-    hideFFmpegPanel();
-
-    const autoA = document.createElement('a');
-    autoA.href = url;
-    autoA.download = 'فيديو-مدمج.mp4';
-    document.body.appendChild(autoA);
-    autoA.click();
-    document.body.removeChild(autoA);
   }
 
   window.addEventListener('resize', () => { if(mainDuration) buildRuler(); });
